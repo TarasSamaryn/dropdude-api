@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("dropdudedatabase")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c43dca5b275e551407f6baba5e0b6638b91bb608")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0588888e292ef6b4685add5239b9b1e81ce3482e")]
 [assembly: System.Reflection.AssemblyProductAttribute("dropdudedatabase")]
 [assembly: System.Reflection.AssemblyTitleAttribute("dropdudedatabase")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
