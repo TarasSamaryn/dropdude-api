@@ -93,20 +93,6 @@ app.MapGet("/logview", async ctx =>
     await ctx.Response.SendFileAsync(file);
 });
 
-// 3) Адмін-панель
-app.MapGet("/admin", async ctx =>
-{
-    var webRoot = app.Environment.WebRootPath ?? "wwwroot";
-    var file = Path.Combine(webRoot, "admin", "adminpanel.html");
-    if (!File.Exists(file))
-    {
-        ctx.Response.StatusCode = 404;
-        await ctx.Response.WriteAsync("Admin panel not found");
-        return;
-    }
-    ctx.Response.ContentType = "text/html; charset=utf-8";
-    await ctx.Response.SendFileAsync(file);
-});
 
 // 4) Web API контролери
 app.MapControllers();

@@ -4,30 +4,38 @@
     <projectFile profileName="IIS Express">MinefieldServer.csproj</projectFile>
     <projectFile profileName="http">MinefieldServer.csproj</projectFile>
     <projectFile profileName="https">MinefieldServer.csproj</projectFile>
+    <projectFile profileName="IIS Express">dropdudedatabase.csproj</projectFile>
+    <projectFile profileName="http">dropdudedatabase.csproj</projectFile>
+    <projectFile profileName="https">dropdudedatabase.csproj</projectFile>
   </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7be3f72-a598-4dbe-b43e-b66694a81503" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.dropdudedatabase/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.dropdudedatabase/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.dropdudedatabase/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.dropdudedatabase/.idea/vcs.xml" beforeDir="false" />
+    <list default="true" id="980fcdda-b76d-4c57-b1ff-405399e3ea64" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Data/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Data/AppDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/GameSession.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/MineChanceStep.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/MultiplierStep.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Debug/net8.0/dropdudedatabase.dll" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/net8.0/dropdudedatabase.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Debug/net8.0/dropdudedatabase.exe" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/net8.0/dropdudedatabase.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Debug/net8.0/dropdudedatabase.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/net8.0/dropdudedatabase.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dropdudedatabase.http" beforeDir="false" afterPath="$PROJECT_DIR$/drop-dude-rest-api.http" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dropdudedatabase.sln" beforeDir="false" afterPath="$PROJECT_DIR$/drop-dude-rest-api.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Debug/net8.0/dropdudedatabase.staticwebassets.endpoints.json" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/net8.0/dropdudedatabase.staticwebassets.endpoints.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/apphost.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.csproj.CoreCompileInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.dll" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/dropdudedatabase.sourcelink.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/ref/dropdudedatabase.dll" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/ref/dropdudedatabase.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/refint/dropdudedatabase.dll" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/refint/dropdudedatabase.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/staticwebassets.build.endpoints.json" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/staticwebassets.build.endpoints.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/staticwebassets.build.json" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/staticwebassets.build.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/net8.0/staticwebassets/msbuild.dropdudedatabase.Microsoft.AspNetCore.StaticWebAssetEndpoints.props" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/net8.0/staticwebassets/msbuild.dropdudedatabase.Microsoft.AspNetCore.StaticWebAssetEndpoints.props" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/obj/rider.project.model.nuget.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/obj/rider.project.restore.info" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +51,13 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/31d685b2d9a86ca1243014d175a3da813f78e428/src/Security/Authorization/Policy/src/PolicyServiceCollectionExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/Downloads/updated_Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Controllers/AuthController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Controllers/GameController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Controllers/ProfileController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Logging/MyInMemoryLogger.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Models/Player.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6

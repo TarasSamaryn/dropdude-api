@@ -42,8 +42,7 @@ namespace MinefieldServer.Controllers
             return Ok(new
             {
                 username  = player.Username,
-                testCoins = player.TestCoins,
-                realCoins = player.RealCoins,
+                availableSkins = player.AvailableSkins,
                 isAdmin   = player.IsAdmin
             });
         }

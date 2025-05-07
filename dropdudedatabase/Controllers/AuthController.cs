@@ -40,8 +40,7 @@ namespace MinefieldServer.Controllers
                 Username     = request.Username,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 CreatedAt    = DateTime.UtcNow,
-                TestCoins    = 5000,
-                RealCoins    = 0,
+                AvailableSkins = Array.Empty<string>(),
                 IsAdmin      = false
             };
 

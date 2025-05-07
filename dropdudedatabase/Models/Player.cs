@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,9 +10,6 @@ namespace MinefieldServer.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        /// <summary>
-        /// Чи є адміністративним користувачем
-        /// </summary>
         public bool IsAdmin { get; set; } = false;
 
         [Required]
@@ -20,10 +18,9 @@ namespace MinefieldServer.Models
         [Required]
         public string PasswordHash { get; set; } = null!;
 
-        // Заміна DateTime на DateTimeOffset
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
-        public int TestCoins { get; set; } = 5000;
-        public int RealCoins { get; set; } = 5000;
+        // Додаємо ініціалізацію, щоб string[] не був null
+        public string[] AvailableSkins { get; set; } = Array.Empty<string>();
     }
 }
