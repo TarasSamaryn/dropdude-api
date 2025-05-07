@@ -1,0 +1,6 @@
+@MinefieldServer_HostAddress = http://localhost:5220
+
+GET {{MinefieldServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

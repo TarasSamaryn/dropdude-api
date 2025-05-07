@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Minefield Server Logs</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1e1e1e;
+            color: #dcdcdc;
+            padding: 1em;
+        }
+        .info {
+            color: #4fc3f7;
+        }
+        .warn {
+            color: #ffb74d;
+        }
+        .error {
+            color: #ef5350;
+        }
+        .log-line {
+            margin-bottom: 4px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+<h2>🧠 Minefield Server Logs</h2>
+<div id="log-container">Loading...</div>
+
+<script>
+    let lastLogLength = 0;
+
+    async function loadLogs() {
+        try {
+            const res = await fetch('/logs', { cache: 'no-store' });
+            const json = await res.json();
+            const container = document.getElementById('log-container');
+
+            if (lastLogLength === 0) {
+                container.innerHTML = '';
+            }
+
+            // Додаємо лише нові рядки
+            for (let i = lastLogLength; i < json.length; i++) {
+                const log = json[i];
+                const line = document.createElement('div');
+                line.classList.add('log-line');
+
+                if (log.includes('[Error]')) line.classList.add('error');
+                else if (log.includes('[Warning]')) line.classList.add('warn');
+                else line.classList.add('info');
+
+                line.textContent = log;
+                container.appendChild(line);
+            }
+
+            lastLogLength = json.length;
+        } catch (e) {
+            document.getElementById('log-container').textContent = '❌ Failed to load logs.';
+        }
+    }
+
+    loadLogs();
+    setInterval(loadLogs, 1000);
+</script>
+</body>
+</html>

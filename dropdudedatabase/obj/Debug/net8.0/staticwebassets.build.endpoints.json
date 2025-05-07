@@ -1,0 +1,88 @@
+{
+  "Version": 1,
+  "ManifestType": "Build",
+  "Endpoints": [
+    {
+      "Route": "admin/logview.html",
+      "AssetFile": "admin/logview.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1882"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"9QD6s3lMn0kYwc7wSFg7YmQIun9ORKE32j69+pRBLZc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 12:52:29 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-9QD6s3lMn0kYwc7wSFg7YmQIun9ORKE32j69+pRBLZc="
+        }
+      ]
+    },
+    {
+      "Route": "admin/logview.tqbuaooh9c.html",
+      "AssetFile": "admin/logview.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1882"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"9QD6s3lMn0kYwc7wSFg7YmQIun9ORKE32j69+pRBLZc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 01 May 2025 12:52:29 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "tqbuaooh9c"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-9QD6s3lMn0kYwc7wSFg7YmQIun9ORKE32j69+pRBLZc="
+        },
+        {
+          "Name": "label",
+          "Value": "admin/logview.html"
+        }
+      ]
+    }
+  ]
+}
