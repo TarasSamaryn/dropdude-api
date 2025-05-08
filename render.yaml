@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: minefield-server
+    name: dropdude-api
     env: docker
     plan: free
     dockerfilePath: ./Dockerfile
@@ -10,4 +10,4 @@ services:
     healthCheckPath: /
     envVars:
       - key: Jwt__Key
-        value: your-very-secret-jwt-key
+        value: aVeryLongAndRandomJwtSecretKey_MustBeAtLeast32Chars!

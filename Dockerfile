@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Переходимо до каталогу з проєктом
-WORKDIR /app/MinefieldServer
+WORKDIR /app/dropdudeAPI
 
 # Відновлення залежностей і публікація
 RUN dotnet restore
@@ -26,4 +26,4 @@ COPY --from=build /app/out ./
 ENV ASPNETCORE_URLS=http://+:10000
 EXPOSE 10000
 
-ENTRYPOINT ["dotnet", "MinefieldServer.dll"]
+ENTRYPOINT ["dotnet", "dropdudeAPI.dll"]
