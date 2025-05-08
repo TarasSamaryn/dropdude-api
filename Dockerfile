@@ -11,8 +11,8 @@ COPY . .
 WORKDIR /app/dropdudeAPI
 
 # Відновлення залежностей і публікація
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app/out
+RUN dotnet restore dropdudeAPI.csproj
+RUN dotnet publish dropdudeAPI.csproj -c Release -o /app/out
 
 # --------------------------
 # Runtime stage
