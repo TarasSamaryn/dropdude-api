@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Work\\Sayr0x_repositories\\drop-dude-database\\dropdude-API\\wwwroot\\admin\\logview.html",
+      "PackagePath": "staticwebassets\\admin\\logview.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.dropdudeAPI.props",
+      "PackagePath": "build\\dropdudeAPI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.dropdudeAPI.props",
+      "PackagePath": "buildMultiTargeting\\dropdudeAPI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.dropdudeAPI.props",
+      "PackagePath": "buildTransitive\\dropdudeAPI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.dropdudeAPI.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.dropdudeAPI.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
