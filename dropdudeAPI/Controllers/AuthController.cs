@@ -42,10 +42,10 @@ namespace MinefieldServer.Controllers
                 CreatedAt    = DateTime.UtcNow,
                 IsAdmin      = false,
                 
-                HeadsSkins = new int[] { 0,1,6 },
-                BodiesSkins = new int[] { 0,1,6 },
-                LegsSkins = new int[] { 0,1,6 },
-                MasksSkins = new int[] { 0,1,2,3 },
+                HeadsSkins = new int[] { 0,6,7 },
+                BodiesSkins = new int[] { 0,6,7 },
+                LegsSkins = new int[] { 0,6,7 },
+                MasksSkins = new int[] {0},
                 
                 LastSelectedSkin = "0.0.0.0",
             };
