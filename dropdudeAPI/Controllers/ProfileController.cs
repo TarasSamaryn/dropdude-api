@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using MinefieldServer.Data;
 using MinefieldServer.Models;
@@ -11,80 +14,167 @@ namespace MinefieldServer.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly AppDbContext _db;
-        public ProfileController(AppDbContext db) => _db = db;
 
-        private Player? GetCurrentPlayer()
+        public ProfileController(AppDbContext db)
         {
-            var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(idClaim, out var id)) return null;
-            return _db.Players.Find(id);
+            _db = db;
         }
 
-        [HttpGet, Authorize]
+        // Допоміжний метод для отримання поточного гравця за токеном
+        private Player GetCurrentPlayer()
+        {
+            string idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            bool parsed = Int32.TryParse(idClaim, out int id);
+            if (parsed == false)
+            {
+                return null;
+            }
+
+            Player player = _db.Players.Find(id);
+            return player;
+        }
+
+        // 1. Отримати профіль
+        [HttpGet]
+        [Authorize]
         public IActionResult GetProfile()
         {
-            var p = GetCurrentPlayer();
-            if (p == null) return Unauthorized();
-            return Ok(new {
-                id = p.Id,
-                isAdmin = p.IsAdmin,
-                username = p.Username,
-                lastSelectedSkin = p.LastSelectedSkin,
-                headsSkins = p.HeadsSkins,
-                bodiesSkins = p.BodiesSkins,
-                legsSkins = p.LegsSkins,
-                masksSkins = p.MasksSkins,
+            Player player = GetCurrentPlayer();
+            if (player == null)
+            {
+                return Unauthorized(new { error = "Invalid token or player not found" });
+            }
+
+            return Ok(new
+            {
+                id = player.Id,
+                isAdmin = player.IsAdmin,
+                username = player.Username,
+                lastSelectedSkin = player.LastSelectedSkin,
+                headsSkins = player.HeadsSkins,
+                bodiesSkins = player.BodiesSkins,
+                legsSkins = player.LegsSkins,
+                masksSkins = player.MasksSkins
             });
         }
 
-        [HttpPost("skins/{type}/{skinId}"), Authorize]
-        public IActionResult AddSkin(string type, int skinId)
+        // 2. Додати скін голови
+        [HttpPost("skins/head/{skinId}")]
+        [Authorize]
+        public IActionResult AddHeadSkin(int skinId)
         {
-            var p = GetCurrentPlayer();
-            if (p == null) return Unauthorized();
-
-            var list = type.ToLower() switch
+            Player player = GetCurrentPlayer();
+            if (player == null)
             {
-                "head"  => p.HeadsSkins.ToList(),
-                "body"  => p.BodiesSkins.ToList(),
-                "legs"  => p.LegsSkins.ToList(),
-                "mask"  => p.MasksSkins.ToList(),
-                _       => null
-            };
-            if (list == null) return BadRequest("Unknown skin type");
-            if (list.Contains(skinId)) return BadRequest("Skin already added");
+                return Unauthorized();
+            }
+
+            List<int> list = player.HeadsSkins.ToList();
+            if (list.Contains(skinId))
+            {
+                return BadRequest(new { error = "Head skin already added" });
+            }
 
             list.Add(skinId);
-            switch (type.ToLower())
-            {
-                case "head": p.HeadsSkins = list.ToArray(); break;
-                case "body": p.BodiesSkins = list.ToArray(); break;
-                case "legs": p.LegsSkins = list.ToArray(); break;
-                case "mask": p.MasksSkins = list.ToArray(); break;
-            }
+            player.HeadsSkins = list.ToArray();
             _db.SaveChanges();
-            return Ok(new { message = $"Added {type} skin {skinId}" });
+
+            return Ok(new { message = $"Added head skin {skinId}" });
         }
 
-        [HttpPost("skin/select"), Authorize]
+        // 3. Додати скін тіла
+        [HttpPost("skins/body/{skinId}")]
+        [Authorize]
+        public IActionResult AddBodySkin(int skinId)
+        {
+            Player player = GetCurrentPlayer();
+            if (player == null)
+            {
+                return Unauthorized();
+            }
+
+            List<int> list = player.BodiesSkins.ToList();
+            if (list.Contains(skinId))
+            {
+                return BadRequest(new { error = "Body skin already added" });
+            }
+
+            list.Add(skinId);
+            player.BodiesSkins = list.ToArray();
+            _db.SaveChanges();
+
+            return Ok(new { message = $"Added body skin {skinId}" });
+        }
+
+        // 4. Додати скін ніг
+        [HttpPost("skins/legs/{skinId}")]
+        [Authorize]
+        public IActionResult AddLegsSkin(int skinId)
+        {
+            Player player = GetCurrentPlayer();
+            if (player == null)
+            {
+                return Unauthorized();
+            }
+
+            List<int> list = player.LegsSkins.ToList();
+            if (list.Contains(skinId))
+            {
+                return BadRequest(new { error = "Legs skin already added" });
+            }
+
+            list.Add(skinId);
+            player.LegsSkins = list.ToArray();
+            _db.SaveChanges();
+
+            return Ok(new { message = $"Added legs skin {skinId}" });
+        }
+
+        // 5. Додати скін маски
+        [HttpPost("skins/mask/{skinId}")]
+        [Authorize]
+        public IActionResult AddMaskSkin(int skinId)
+        {
+            Player player = GetCurrentPlayer();
+            if (player == null)
+            {
+                return Unauthorized();
+            }
+
+            List<int> list = player.MasksSkins.ToList();
+            if (list.Contains(skinId))
+            {
+                return BadRequest(new { error = "Mask skin already added" });
+            }
+
+            list.Add(skinId);
+            player.MasksSkins = list.ToArray();
+            _db.SaveChanges();
+
+            return Ok(new { message = $"Added mask skin {skinId}" });
+        }
+
+        // 6. Перезаписати LastSelectedSkin у форматі string
+        [HttpPost("skin/select")]
+        [Authorize]
         public IActionResult SelectSkin([FromBody] SkinSelectionDto dto)
         {
-            var p = GetCurrentPlayer();
-            if (p == null) return Unauthorized();
+            Player player = GetCurrentPlayer();
+            if (player == null)
+            {
+                return Unauthorized(new { error = "Invalid token or player not found" });
+            }
 
-            bool owned = new[]{
-                p.HeadsSkins, p.BodiesSkins, p.LegsSkins, p.MasksSkins
-            }.Any(arr => arr.Contains(dto.SkinId));
-            if (!owned) return BadRequest("Skin not owned");
-
-            p.LastSelectedSkin = dto.SkinId.ToString();
+            player.LastSelectedSkin = dto.SelectedSkin;
             _db.SaveChanges();
-            return Ok(new { message = $"Selected skin {dto.SkinId}" });
+
+            return Ok(new { message = $"Selected skin {dto.SelectedSkin}" });
         }
     }
 
+    // DTO для вибору скіну у вигляді рядка
     public class SkinSelectionDto
     {
-        public int SkinId { get; set; }
+        public string SelectedSkin { get; set; }
     }
 }
