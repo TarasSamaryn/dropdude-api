@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using MinefieldServer.Data;
+using MinefieldServer.Models;
 
 namespace MinefieldServer.Controllers
 {
@@ -10,42 +11,80 @@ namespace MinefieldServer.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly AppDbContext _db;
-        private readonly ILogger<ProfileController> _logger;
+        public ProfileController(AppDbContext db) => _db = db;
 
-        public ProfileController(AppDbContext db, ILogger<ProfileController> logger)
+        private Player? GetCurrentPlayer()
         {
-            _db = db;
-            _logger = logger;
+            var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(idClaim, out var id)) return null;
+            return _db.Players.Find(id);
         }
 
-        [HttpGet]
-        [Authorize]
+        [HttpGet, Authorize]
         public IActionResult GetProfile()
         {
-            _logger.LogInformation("📥 GET /profile requested");
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(userId, out var id))
-            {
-                _logger.LogWarning("⛔ Failed to parse user ID from token ({Token})", userId);
-                return Unauthorized(new { error = "Invalid token" });
-            }
-
-            var player = _db.Players.Find(id);
-            if (player == null)
-            {
-                _logger.LogWarning("❌ Player with ID {Id} not found", id);
-                return NotFound(new { error = "Player not found" });
-            }
-
-            _logger.LogInformation("✅ Profile returned for player '{Username}' (ID: {Id})", player.Username, id);
-            return Ok(new
-            {
-                username  = player.Username,
-                availableSkins = player.AvailableSkins,
-                lastSelectedSkin = player.AvailableSkins,
-                isAdmin   = player.IsAdmin
+            var p = GetCurrentPlayer();
+            if (p == null) return Unauthorized();
+            return Ok(new {
+                id = p.Id,
+                isAdmin = p.IsAdmin,
+                username = p.Username,
+                lastSelectedSkin = p.LastSelectedSkin,
+                headsSkins = p.HeadsSkins,
+                bodiesSkins = p.BodiesSkins,
+                legsSkins = p.LegsSkins,
+                masksSkins = p.MasksSkins,
             });
         }
+
+        [HttpPost("skins/{type}/{skinId}"), Authorize]
+        public IActionResult AddSkin(string type, int skinId)
+        {
+            var p = GetCurrentPlayer();
+            if (p == null) return Unauthorized();
+
+            var list = type.ToLower() switch
+            {
+                "head"  => p.HeadsSkins.ToList(),
+                "body"  => p.BodiesSkins.ToList(),
+                "legs"  => p.LegsSkins.ToList(),
+                "mask"  => p.MasksSkins.ToList(),
+                _       => null
+            };
+            if (list == null) return BadRequest("Unknown skin type");
+            if (list.Contains(skinId)) return BadRequest("Skin already added");
+
+            list.Add(skinId);
+            switch (type.ToLower())
+            {
+                case "head": p.HeadsSkins = list.ToArray(); break;
+                case "body": p.BodiesSkins = list.ToArray(); break;
+                case "legs": p.LegsSkins = list.ToArray(); break;
+                case "mask": p.MasksSkins = list.ToArray(); break;
+            }
+            _db.SaveChanges();
+            return Ok(new { message = $"Added {type} skin {skinId}" });
+        }
+
+        [HttpPost("skin/select"), Authorize]
+        public IActionResult SelectSkin([FromBody] SkinSelectionDto dto)
+        {
+            var p = GetCurrentPlayer();
+            if (p == null) return Unauthorized();
+
+            bool owned = new[]{
+                p.HeadsSkins, p.BodiesSkins, p.LegsSkins, p.MasksSkins
+            }.Any(arr => arr.Contains(dto.SkinId));
+            if (!owned) return BadRequest("Skin not owned");
+
+            p.LastSelectedSkin = dto.SkinId.ToString();
+            _db.SaveChanges();
+            return Ok(new { message = $"Selected skin {dto.SkinId}" });
+        }
+    }
+
+    public class SkinSelectionDto
+    {
+        public int SkinId { get; set; }
     }
 }

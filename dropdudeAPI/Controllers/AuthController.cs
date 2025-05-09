@@ -40,9 +40,14 @@ namespace MinefieldServer.Controllers
                 Username     = request.Username,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 CreatedAt    = DateTime.UtcNow,
-                AvailableSkins = Array.Empty<string>(),
-                LastSelectedSkin = "default",
-                IsAdmin      = false
+                IsAdmin      = false,
+                
+                HeadsSkins = new int[] { 0 },
+                BodiesSkins = new int[] { 0 },
+                LegsSkins = new int[] { 0 },
+                MasksSkins = new int[] { 0 },
+                
+                LastSelectedSkin = "0.0.0.0",
             };
 
             _db.Players.Add(player);

@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,8 +18,11 @@ namespace MinefieldServer.Models
         public string PasswordHash { get; set; } = null!;
 
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-        
-        public string[] AvailableSkins { get; set; } = Array.Empty<string>();
         public string LastSelectedSkin { get; set; } = null!;
+        
+        public int[] HeadsSkins { get; set; } = Array.Empty<int>();
+        public int[] BodiesSkins { get; set; } = Array.Empty<int>();
+        public int[] LegsSkins { get; set; } = Array.Empty<int>();
+        public int[] MasksSkins { get; set; } = Array.Empty<int>();
     }
 }
