@@ -170,6 +170,78 @@ namespace MinefieldServer.Controllers
 
             return Ok(new { message = $"Selected skin {dto.SelectedSkin}" });
         }
+
+        // 7. Видалити скін голови
+        [HttpDelete("skins/head/{skinId}")]
+        [Authorize]
+        public IActionResult RemoveHeadSkin(int skinId)
+        {
+            Player player = GetCurrentPlayer();
+            if (player == null) return Unauthorized();
+
+            List<int> list = player.HeadsSkins.ToList();
+            if (!list.Contains(skinId)) return BadRequest(new { error = "Head skin not found" });
+
+            list.Remove(skinId);
+            player.HeadsSkins = list.ToArray();
+            _db.SaveChanges();
+
+            return Ok(new { message = $"Removed head skin {skinId}" });
+        }
+
+        // 8. Видалити скін тіла
+        [HttpDelete("skins/body/{skinId}")]
+        [Authorize]
+        public IActionResult RemoveBodySkin(int skinId)
+        {
+            Player player = GetCurrentPlayer();
+            if (player == null) return Unauthorized();
+
+            List<int> list = player.BodiesSkins.ToList();
+            if (!list.Contains(skinId)) return BadRequest(new { error = "Body skin not found" });
+
+            list.Remove(skinId);
+            player.BodiesSkins = list.ToArray();
+            _db.SaveChanges();
+
+            return Ok(new { message = $"Removed body skin {skinId}" });
+        }
+
+        // 9. Видалити скін ніг
+        [HttpDelete("skins/legs/{skinId}")]
+        [Authorize]
+        public IActionResult RemoveLegsSkin(int skinId)
+        {
+            Player player = GetCurrentPlayer();
+            if (player == null) return Unauthorized();
+
+            List<int> list = player.LegsSkins.ToList();
+            if (!list.Contains(skinId)) return BadRequest(new { error = "Legs skin not found" });
+
+            list.Remove(skinId);
+            player.LegsSkins = list.ToArray();
+            _db.SaveChanges();
+
+            return Ok(new { message = $"Removed legs skin {skinId}" });
+        }
+
+        // 10. Видалити скін маски
+        [HttpDelete("skins/mask/{skinId}")]
+        [Authorize]
+        public IActionResult RemoveMaskSkin(int skinId)
+        {
+            Player player = GetCurrentPlayer();
+            if (player == null) return Unauthorized();
+
+            List<int> list = player.MasksSkins.ToList();
+            if (!list.Contains(skinId)) return BadRequest(new { error = "Mask skin not found" });
+
+            list.Remove(skinId);
+            player.MasksSkins = list.ToArray();
+            _db.SaveChanges();
+
+            return Ok(new { message = $"Removed mask skin {skinId}" });
+        }
     }
 
     // DTO для вибору скіну у вигляді рядка
