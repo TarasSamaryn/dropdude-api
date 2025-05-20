@@ -24,5 +24,6 @@ namespace MinefieldServer.Models
         public int[] BodiesSkins { get; set; } = Array.Empty<int>();
         public int[] LegsSkins { get; set; } = Array.Empty<int>();
         public int[] MasksSkins { get; set; } = Array.Empty<int>();
+        public int MonthlyWins { get; set; } = 0;
     }
 }
