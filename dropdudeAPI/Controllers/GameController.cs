@@ -135,12 +135,18 @@ namespace MinefieldServer.Controllers
                 DateTime.UtcNow.Month,
                 1, 0, 0, 0,
                 TimeSpan.Zero);
+
             var list = await _db.GameResults
                 .Where(r => r.OccurredAt >= monthStart)
                 .GroupBy(r => r.PlayerId)
                 .Select(g => new { PlayerId = g.Key, Wins = g.Count() })
                 .OrderByDescending(x => x.Wins)
+                .Join(_db.Players,
+                    g => g.PlayerId,
+                    p => p.Id,
+                    (g, p) => new { p.Username, g.Wins })
                 .ToListAsync();
+
             return Ok(list);
         }
     }

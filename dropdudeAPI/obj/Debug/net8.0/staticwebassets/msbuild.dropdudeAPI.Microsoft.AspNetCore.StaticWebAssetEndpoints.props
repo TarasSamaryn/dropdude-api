@@ -1,16 +1,16 @@
 ﻿<Project>
   <ItemGroup>
-    <StaticWebAssetEndpoint Include="_content/dropdudeAPI/admin/leaderboard.dd10u9b7fl.html">
+    <StaticWebAssetEndpoint Include="_content/dropdudeAPI/admin/leaderboard.2wgifs7f64.html">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\admin\leaderboard.html'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"dd10u9b7fl"},{"Name":"integrity","Value":"sha256-D\u002Beizz5vbi7ifXpdfZB5mq5WafP8E38SU\u002Byh/9VJ0VI="},{"Name":"label","Value":"_content/dropdudeAPI/admin/leaderboard.html"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1021"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022D\u002Beizz5vbi7ifXpdfZB5mq5WafP8E38SU\u002Byh/9VJ0VI=\u0022"},{"Name":"Last-Modified","Value":"Wed, 21 May 2025 18:20:10 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"2wgifs7f64"},{"Name":"integrity","Value":"sha256-ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE="},{"Name":"label","Value":"_content/dropdudeAPI/admin/leaderboard.html"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"2161"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE=\u0022"},{"Name":"Last-Modified","Value":"Wed, 21 May 2025 19:37:48 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/dropdudeAPI/admin/leaderboard.html">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\admin\leaderboard.html'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-D\u002Beizz5vbi7ifXpdfZB5mq5WafP8E38SU\u002Byh/9VJ0VI="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1021"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022D\u002Beizz5vbi7ifXpdfZB5mq5WafP8E38SU\u002Byh/9VJ0VI=\u0022"},{"Name":"Last-Modified","Value":"Wed, 21 May 2025 18:20:10 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"2161"},{"Name":"Content-Type","Value":"text/html"},{"Name":"ETag","Value":"\u0022ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE=\u0022"},{"Name":"Last-Modified","Value":"Wed, 21 May 2025 19:37:48 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/dropdudeAPI/admin/logview.html">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\admin\logview.html'))</AssetFile>
