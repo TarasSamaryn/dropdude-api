@@ -25,7 +25,7 @@ namespace MinefieldServer.Controllers
         }
 
         [HttpPost("finish")]
-        [Authorize(Policy = "RequireServiceToken")]
+        [Authorize]
         public async Task<IActionResult> Finish([FromBody] RecordResultDto dto)
         {
             _logger.LogInformation("🔔 Finish hit: {@Dto}", dto);
@@ -114,7 +114,7 @@ namespace MinefieldServer.Controllers
         }
 
         [HttpPost("reset-monthly")]
-        [Authorize(Policy = "RequireAdmin")]
+        [Authorize]
         public async Task<IActionResult> ResetMonthlyWins()
         {
             _logger.LogInformation("🔔 ResetMonthlyWins hit");
