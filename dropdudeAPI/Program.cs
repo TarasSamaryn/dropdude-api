@@ -93,6 +93,20 @@ app.MapGet("/logview", async ctx =>
     await ctx.Response.SendFileAsync(file);
 });
 
+app.MapGet("/leaderboard", async ctx =>
+{
+    var webRoot = app.Environment.WebRootPath ?? "wwwroot";
+    var file    = Path.Combine(webRoot, "admin", "leaderboard.html");
+    if (!File.Exists(file))
+    {
+        ctx.Response.StatusCode = 404;
+        await ctx.Response.WriteAsync("Leaderboard page not found");
+        return;
+    }
+    ctx.Response.ContentType = "text/html; charset=utf-8";
+    await ctx.Response.SendFileAsync(file);
+});
+
 
 // 4) Web API контролери
 app.MapControllers();

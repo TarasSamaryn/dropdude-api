@@ -3,6 +3,88 @@
   "ManifestType": "Build",
   "Endpoints": [
     {
+      "Route": "admin/leaderboard.dd10u9b7fl.html",
+      "AssetFile": "admin/leaderboard.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1021"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"D+eizz5vbi7ifXpdfZB5mq5WafP8E38SU+yh/9VJ0VI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 21 May 2025 18:20:10 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "dd10u9b7fl"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-D+eizz5vbi7ifXpdfZB5mq5WafP8E38SU+yh/9VJ0VI="
+        },
+        {
+          "Name": "label",
+          "Value": "admin/leaderboard.html"
+        }
+      ]
+    },
+    {
+      "Route": "admin/leaderboard.html",
+      "AssetFile": "admin/leaderboard.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1021"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"D+eizz5vbi7ifXpdfZB5mq5WafP8E38SU+yh/9VJ0VI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 21 May 2025 18:20:10 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-D+eizz5vbi7ifXpdfZB5mq5WafP8E38SU+yh/9VJ0VI="
+        }
+      ]
+    },
+    {
       "Route": "admin/logview.html",
       "AssetFile": "admin/logview.html",
       "Selectors": [],

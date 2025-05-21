@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "MJSTOh4j4UyzYCNl1ENk42it4Kj6RvwEhO0efMWebGo=",
+  "Hash": "qm6sBjx09h0YUprhK6uGCJT8uiAfh0WKg0LkjrpvSIg=",
   "Source": "dropdudeAPI",
   "BasePath": "_content/dropdudeAPI",
   "Mode": "Default",
@@ -16,6 +16,27 @@
     }
   ],
   "Assets": [
+    {
+      "Identity": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\leaderboard.html",
+      "SourceId": "dropdudeAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\",
+      "BasePath": "_content/dropdudeAPI",
+      "RelativePath": "admin/leaderboard#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "dd10u9b7fl",
+      "Integrity": "D+eizz5vbi7ifXpdfZB5mq5WafP8E38SU+yh/9VJ0VI=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\admin\\leaderboard.html"
+    },
     {
       "Identity": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\logview.html",
       "SourceId": "dropdudeAPI",
@@ -39,6 +60,88 @@
     }
   ],
   "Endpoints": [
+    {
+      "Route": "admin/leaderboard.dd10u9b7fl.html",
+      "AssetFile": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\leaderboard.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1021"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"D+eizz5vbi7ifXpdfZB5mq5WafP8E38SU+yh/9VJ0VI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 21 May 2025 18:20:10 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "dd10u9b7fl"
+        },
+        {
+          "Name": "label",
+          "Value": "admin/leaderboard.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-D+eizz5vbi7ifXpdfZB5mq5WafP8E38SU+yh/9VJ0VI="
+        }
+      ]
+    },
+    {
+      "Route": "admin/leaderboard.html",
+      "AssetFile": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\leaderboard.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1021"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"D+eizz5vbi7ifXpdfZB5mq5WafP8E38SU+yh/9VJ0VI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 21 May 2025 18:20:10 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-D+eizz5vbi7ifXpdfZB5mq5WafP8E38SU+yh/9VJ0VI="
+        }
+      ]
+    },
     {
       "Route": "admin/logview.html",
       "AssetFile": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\logview.html",

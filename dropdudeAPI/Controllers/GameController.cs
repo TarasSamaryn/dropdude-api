@@ -1,10 +1,6 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using MinefieldServer.Data;
 using MinefieldServer.Models;
 
@@ -35,7 +31,7 @@ namespace MinefieldServer.Controllers
             _logger.LogInformation("🔔 Finish hit: {@Dto}", dto);
 
             // 1) Зберігаємо результат перемоги
-            var result = new GameResult
+            GameResult result = new GameResult
             {
                 PlayerId   = dto.WinnerId,
                 OccurredAt = DateTimeOffset.UtcNow
@@ -43,7 +39,8 @@ namespace MinefieldServer.Controllers
             _db.GameResults.Add(result);
 
             // 2) Інкрементуємо MonthlyWins
-            var player = await _db.Players.FindAsync(dto.WinnerId);
+            Player? player = await _db.Players.FindAsync(dto.WinnerId);
+            
             if (player == null)
             {
                 _logger.LogWarning("⚠️ Player not found: {Id}", dto.WinnerId);
@@ -66,7 +63,7 @@ namespace MinefieldServer.Controllers
         {
             _logger.LogInformation("🔔 Leaderboard hit");
 
-            var monthStart = new DateTimeOffset(
+            DateTimeOffset monthStart = new DateTimeOffset(
                 DateTime.UtcNow.Year,
                 DateTime.UtcNow.Month,
                 1, 0, 0, 0,
@@ -128,6 +125,23 @@ namespace MinefieldServer.Controllers
 
             _logger.LogInformation("✅ MonthlyWins reset for all players");
             return Ok("Лічильники скинуто");
+        }
+        
+        [HttpGet("leaderboard/all")]
+        public async Task<IActionResult> GetFullLeaderboard()
+        {
+            var monthStart = new DateTimeOffset(
+                DateTime.UtcNow.Year,
+                DateTime.UtcNow.Month,
+                1, 0, 0, 0,
+                TimeSpan.Zero);
+            var list = await _db.GameResults
+                .Where(r => r.OccurredAt >= monthStart)
+                .GroupBy(r => r.PlayerId)
+                .Select(g => new { PlayerId = g.Key, Wins = g.Count() })
+                .OrderByDescending(x => x.Wins)
+                .ToListAsync();
+            return Ok(list);
         }
     }
 }

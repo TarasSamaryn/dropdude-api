@@ -1,6 +1,10 @@
 {
   "Files": [
     {
+      "Id": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\leaderboard.html",
+      "PackagePath": "staticwebassets\\admin\\leaderboard.html"
+    },
+    {
       "Id": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\logview.html",
       "PackagePath": "staticwebassets\\admin\\logview.html"
     },
