@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "8ctHJZg0ZZFOtyi+z3667dVMa3hz07hQ3c79b91kWvU=",
+  "Hash": "EokiSgKpJvDQiBW6lSTnEat25EstIe/IQnusYMsFzaw=",
   "Source": "dropdudeAPI",
   "BasePath": "_content/dropdudeAPI",
   "Mode": "Default",
@@ -17,6 +17,27 @@
   ],
   "Assets": [
     {
+      "Identity": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\index.html",
+      "SourceId": "dropdudeAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\",
+      "BasePath": "_content/dropdudeAPI",
+      "RelativePath": "admin/index#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "x86j3t6bb6",
+      "Integrity": "YT0JOcSwc+d1jjSBdU3rWGLoQFnzZS3PzwvoR9XDtrw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\admin\\index.html"
+    },
+    {
       "Identity": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\leaderboard.html",
       "SourceId": "dropdudeAPI",
       "SourceType": "Discovered",
@@ -31,8 +52,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "2wgifs7f64",
-      "Integrity": "ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE=",
+      "Fingerprint": "9dcvlt6l1w",
+      "Integrity": "XbmrWhR95BAXTu89NIClICrmHmQb46pQmsY1N1O1zbs=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\admin\\leaderboard.html"
@@ -61,8 +82,8 @@
   ],
   "Endpoints": [
     {
-      "Route": "admin/leaderboard.2wgifs7f64.html",
-      "AssetFile": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\leaderboard.html",
+      "Route": "admin/index.html",
+      "AssetFile": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\index.html",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -71,7 +92,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2161"
+          "Value": "3212"
         },
         {
           "Name": "Content-Type",
@@ -79,11 +100,48 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE=\""
+          "Value": "\"YT0JOcSwc+d1jjSBdU3rWGLoQFnzZS3PzwvoR9XDtrw=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 21 May 2025 19:37:48 GMT"
+          "Value": "Thu, 22 May 2025 10:33:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-YT0JOcSwc+d1jjSBdU3rWGLoQFnzZS3PzwvoR9XDtrw="
+        }
+      ]
+    },
+    {
+      "Route": "admin/index.x86j3t6bb6.html",
+      "AssetFile": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3212"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"YT0JOcSwc+d1jjSBdU3rWGLoQFnzZS3PzwvoR9XDtrw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 22 May 2025 10:33:14 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -93,7 +151,52 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "2wgifs7f64"
+          "Value": "x86j3t6bb6"
+        },
+        {
+          "Name": "label",
+          "Value": "admin/index.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-YT0JOcSwc+d1jjSBdU3rWGLoQFnzZS3PzwvoR9XDtrw="
+        }
+      ]
+    },
+    {
+      "Route": "admin/leaderboard.9dcvlt6l1w.html",
+      "AssetFile": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\leaderboard.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2587"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XbmrWhR95BAXTu89NIClICrmHmQb46pQmsY1N1O1zbs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 22 May 2025 10:37:01 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "9dcvlt6l1w"
         },
         {
           "Name": "label",
@@ -101,7 +204,7 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE="
+          "Value": "sha256-XbmrWhR95BAXTu89NIClICrmHmQb46pQmsY1N1O1zbs="
         }
       ]
     },
@@ -116,7 +219,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2161"
+          "Value": "2587"
         },
         {
           "Name": "Content-Type",
@@ -124,11 +227,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE=\""
+          "Value": "\"XbmrWhR95BAXTu89NIClICrmHmQb46pQmsY1N1O1zbs=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 21 May 2025 19:37:48 GMT"
+          "Value": "Thu, 22 May 2025 10:37:01 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -138,7 +241,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE="
+          "Value": "sha256-XbmrWhR95BAXTu89NIClICrmHmQb46pQmsY1N1O1zbs="
         }
       ]
     },

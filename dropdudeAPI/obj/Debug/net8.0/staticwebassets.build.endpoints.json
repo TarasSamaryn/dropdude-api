@@ -3,7 +3,89 @@
   "ManifestType": "Build",
   "Endpoints": [
     {
-      "Route": "admin/leaderboard.2wgifs7f64.html",
+      "Route": "admin/index.html",
+      "AssetFile": "admin/index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3212"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"YT0JOcSwc+d1jjSBdU3rWGLoQFnzZS3PzwvoR9XDtrw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 22 May 2025 10:33:14 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-YT0JOcSwc+d1jjSBdU3rWGLoQFnzZS3PzwvoR9XDtrw="
+        }
+      ]
+    },
+    {
+      "Route": "admin/index.x86j3t6bb6.html",
+      "AssetFile": "admin/index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3212"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"YT0JOcSwc+d1jjSBdU3rWGLoQFnzZS3PzwvoR9XDtrw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 22 May 2025 10:33:14 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "x86j3t6bb6"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-YT0JOcSwc+d1jjSBdU3rWGLoQFnzZS3PzwvoR9XDtrw="
+        },
+        {
+          "Name": "label",
+          "Value": "admin/index.html"
+        }
+      ]
+    },
+    {
+      "Route": "admin/leaderboard.9dcvlt6l1w.html",
       "AssetFile": "admin/leaderboard.html",
       "Selectors": [],
       "ResponseHeaders": [
@@ -17,7 +99,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2161"
+          "Value": "2587"
         },
         {
           "Name": "Content-Type",
@@ -25,21 +107,21 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE=\""
+          "Value": "\"XbmrWhR95BAXTu89NIClICrmHmQb46pQmsY1N1O1zbs=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 21 May 2025 19:37:48 GMT"
+          "Value": "Thu, 22 May 2025 10:37:01 GMT"
         }
       ],
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "2wgifs7f64"
+          "Value": "9dcvlt6l1w"
         },
         {
           "Name": "integrity",
-          "Value": "sha256-ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE="
+          "Value": "sha256-XbmrWhR95BAXTu89NIClICrmHmQb46pQmsY1N1O1zbs="
         },
         {
           "Name": "label",
@@ -62,7 +144,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2161"
+          "Value": "2587"
         },
         {
           "Name": "Content-Type",
@@ -70,17 +152,17 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE=\""
+          "Value": "\"XbmrWhR95BAXTu89NIClICrmHmQb46pQmsY1N1O1zbs=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 21 May 2025 19:37:48 GMT"
+          "Value": "Thu, 22 May 2025 10:37:01 GMT"
         }
       ],
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-ArWsRpf5juQEjJz/TzfAJrfjWwn2Zhmk9yyB1JD2dPE="
+          "Value": "sha256-XbmrWhR95BAXTu89NIClICrmHmQb46pQmsY1N1O1zbs="
         }
       ]
     },

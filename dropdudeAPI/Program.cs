@@ -63,7 +63,14 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
-builder.Services.AddAuthorization();
+
+
+//builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdmin", policy =>
+        policy.RequireClaim("isAdmin", "True"));
+});
 
 var app = builder.Build();
 
@@ -103,6 +110,13 @@ app.MapGet("/leaderboard", async ctx =>
         await ctx.Response.WriteAsync("Leaderboard page not found");
         return;
     }
+    ctx.Response.ContentType = "text/html; charset=utf-8";
+    await ctx.Response.SendFileAsync(file);
+});
+
+app.MapGet("/admin", async ctx =>
+{
+    var file = Path.Combine(app.Environment.WebRootPath, "admin", "index.html");
     ctx.Response.ContentType = "text/html; charset=utf-8";
     await ctx.Response.SendFileAsync(file);
 });

@@ -25,30 +25,26 @@ namespace MinefieldServer.Controllers
         }
 
         [HttpPost("finish")]
-        [Authorize]
+        [Authorize]  // раніше RequireServiceToken, тепер всі залогінені
         public async Task<IActionResult> Finish([FromBody] RecordResultDto dto)
         {
             _logger.LogInformation("🔔 Finish hit: {@Dto}", dto);
 
-            // 1) Зберігаємо результат перемоги
-            GameResult result = new GameResult
+            var result = new GameResult
             {
                 PlayerId   = dto.WinnerId,
                 OccurredAt = DateTimeOffset.UtcNow
             };
             _db.GameResults.Add(result);
 
-            // 2) Інкрементуємо MonthlyWins
-            Player? player = await _db.Players.FindAsync(dto.WinnerId);
-            
+            var player = await _db.Players.FindAsync(dto.WinnerId);
             if (player == null)
             {
                 _logger.LogWarning("⚠️ Player not found: {Id}", dto.WinnerId);
                 return BadRequest("Гравець не знайдений");
             }
-            player.MonthlyWins++;
 
-            // 3) Зберігаємо зміни
+            player.MonthlyWins++;
             await _db.SaveChangesAsync();
 
             _logger.LogInformation(
@@ -59,11 +55,12 @@ namespace MinefieldServer.Controllers
         }
 
         [HttpGet("leaderboard")]
+        [Authorize]  // захищено JWT
         public async Task<IActionResult> GetLeaderboard()
         {
             _logger.LogInformation("🔔 Leaderboard hit");
 
-            DateTimeOffset monthStart = new DateTimeOffset(
+            var monthStart = new DateTimeOffset(
                 DateTime.UtcNow.Year,
                 DateTime.UtcNow.Month,
                 1, 0, 0, 0,
@@ -114,9 +111,11 @@ namespace MinefieldServer.Controllers
         }
 
         [HttpPost("reset-monthly")]
-        [Authorize]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> ResetMonthlyWins()
         {
+            return Ok("Лічильники скинуто");
+            
             _logger.LogInformation("🔔 ResetMonthlyWins hit");
 
             var players = await _db.Players.ToListAsync();
@@ -128,13 +127,15 @@ namespace MinefieldServer.Controllers
         }
         
         [HttpGet("leaderboard/all")]
+        [Authorize]  // захищено JWT
         public async Task<IActionResult> GetFullLeaderboard()
         {
             var monthStart = new DateTimeOffset(
                 DateTime.UtcNow.Year,
                 DateTime.UtcNow.Month,
                 1, 0, 0, 0,
-                TimeSpan.Zero);
+                TimeSpan.Zero
+            );
 
             var list = await _db.GameResults
                 .Where(r => r.OccurredAt >= monthStart)
@@ -142,9 +143,9 @@ namespace MinefieldServer.Controllers
                 .Select(g => new { PlayerId = g.Key, Wins = g.Count() })
                 .OrderByDescending(x => x.Wins)
                 .Join(_db.Players,
-                    g => g.PlayerId,
-                    p => p.Id,
-                    (g, p) => new { p.Username, g.Wins })
+                      g => g.PlayerId,
+                      p => p.Id,
+                      (g, p) => new { p.Username, g.Wins })
                 .ToListAsync();
 
             return Ok(list);

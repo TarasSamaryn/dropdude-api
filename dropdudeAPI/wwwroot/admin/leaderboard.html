@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
     <meta charset="utf-8" />
     <title>Leaderboard</title>
@@ -62,7 +62,17 @@
 
 <script>
     async function loadLeaderboard() {
-        const res  = await fetch('/game/leaderboard/all');
+        const token = localStorage.getItem('jwt');
+        const res = await fetch('/game/leaderboard/all', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+        if (!res.ok) {
+            document.getElementById('leaderboard-body').innerHTML =
+                `<tr><td colspan="3" style="text-align:center;">Помилка завантаження (${res.status})</td></tr>`;
+            return;
+        }
         const data = await res.json();
         const body = document.getElementById('leaderboard-body');
         body.innerHTML = '';
@@ -76,6 +86,7 @@
             body.appendChild(row);
         });
     }
+
     loadLeaderboard();
     setInterval(loadLeaderboard, 5000);
 </script>
