@@ -114,12 +114,15 @@ namespace MinefieldServer.Controllers
         [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> ResetMonthlyWins()
         {
-            return Ok("Лічильники скинуто");
-            
             _logger.LogInformation("🔔 ResetMonthlyWins hit");
 
-            var players = await _db.Players.ToListAsync();
-            players.ForEach(p => p.MonthlyWins = 0);
+            List<Player> players = await _db.Players.ToListAsync();
+            
+            foreach (Player p in players)
+            {
+                p.MonthlyWins = 0;
+            }
+            
             await _db.SaveChangesAsync();
 
             _logger.LogInformation("✅ MonthlyWins reset for all players");
