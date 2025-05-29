@@ -17,7 +17,6 @@ namespace MinefieldServer.Controllers
             _db = db;
         }
 
-        // Допоміжний метод для отримання поточного гравця за токеном
         private Player GetCurrentPlayer()
         {
             string idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -31,7 +30,6 @@ namespace MinefieldServer.Controllers
             return player;
         }
 
-        // 1. Отримати профіль
         [HttpGet]
         [Authorize]
         public IActionResult GetProfile()
@@ -55,7 +53,6 @@ namespace MinefieldServer.Controllers
             });
         }
 
-        // 2. Додати скін голови
         [HttpPost("skins/head/{skinId}")]
         [Authorize]
         public IActionResult AddHeadSkin(int skinId)
@@ -67,11 +64,6 @@ namespace MinefieldServer.Controllers
             }
 
             List<int> list = player.HeadsSkins.ToList();
-            if (list.Contains(skinId))
-            {
-                return BadRequest(new { error = "Head skin already added" });
-            }
-
             list.Add(skinId);
             player.HeadsSkins = list.ToArray();
             _db.SaveChanges();
@@ -79,7 +71,6 @@ namespace MinefieldServer.Controllers
             return Ok(new { message = $"Added head skin {skinId}" });
         }
 
-        // 3. Додати скін тіла
         [HttpPost("skins/body/{skinId}")]
         [Authorize]
         public IActionResult AddBodySkin(int skinId)
@@ -91,11 +82,6 @@ namespace MinefieldServer.Controllers
             }
 
             List<int> list = player.BodiesSkins.ToList();
-            if (list.Contains(skinId))
-            {
-                return BadRequest(new { error = "Body skin already added" });
-            }
-
             list.Add(skinId);
             player.BodiesSkins = list.ToArray();
             _db.SaveChanges();
@@ -103,7 +89,6 @@ namespace MinefieldServer.Controllers
             return Ok(new { message = $"Added body skin {skinId}" });
         }
 
-        // 4. Додати скін ніг
         [HttpPost("skins/legs/{skinId}")]
         [Authorize]
         public IActionResult AddLegsSkin(int skinId)
@@ -115,11 +100,6 @@ namespace MinefieldServer.Controllers
             }
 
             List<int> list = player.LegsSkins.ToList();
-            if (list.Contains(skinId))
-            {
-                return BadRequest(new { error = "Legs skin already added" });
-            }
-
             list.Add(skinId);
             player.LegsSkins = list.ToArray();
             _db.SaveChanges();
@@ -127,7 +107,6 @@ namespace MinefieldServer.Controllers
             return Ok(new { message = $"Added legs skin {skinId}" });
         }
 
-        // 5. Додати скін маски
         [HttpPost("skins/mask/{skinId}")]
         [Authorize]
         public IActionResult AddMaskSkin(int skinId)
@@ -139,11 +118,6 @@ namespace MinefieldServer.Controllers
             }
 
             List<int> list = player.MasksSkins.ToList();
-            if (list.Contains(skinId))
-            {
-                return BadRequest(new { error = "Mask skin already added" });
-            }
-
             list.Add(skinId);
             player.MasksSkins = list.ToArray();
             _db.SaveChanges();
@@ -151,7 +125,6 @@ namespace MinefieldServer.Controllers
             return Ok(new { message = $"Added mask skin {skinId}" });
         }
 
-        // 6. Перезаписати LastSelectedSkin у форматі string
         [HttpPost("skin/select")]
         [Authorize]
         public IActionResult SelectSkin([FromBody] SkinSelectionDto dto)
@@ -168,16 +141,21 @@ namespace MinefieldServer.Controllers
             return Ok(new { message = $"Selected skin {dto.SelectedSkin}" });
         }
 
-        // 7. Видалити скін голови
         [HttpDelete("skins/head/{skinId}")]
         [Authorize]
         public IActionResult RemoveHeadSkin(int skinId)
         {
             Player player = GetCurrentPlayer();
-            if (player == null) return Unauthorized();
+            if (player == null)
+            {
+                return Unauthorized();
+            }
 
             List<int> list = player.HeadsSkins.ToList();
-            if (!list.Contains(skinId)) return BadRequest(new { error = "Head skin not found" });
+            if (!list.Contains(skinId))
+            {
+                return BadRequest(new { error = "Head skin not found" });
+            }
 
             list.Remove(skinId);
             player.HeadsSkins = list.ToArray();
@@ -186,16 +164,21 @@ namespace MinefieldServer.Controllers
             return Ok(new { message = $"Removed head skin {skinId}" });
         }
 
-        // 8. Видалити скін тіла
         [HttpDelete("skins/body/{skinId}")]
         [Authorize]
         public IActionResult RemoveBodySkin(int skinId)
         {
             Player player = GetCurrentPlayer();
-            if (player == null) return Unauthorized();
+            if (player == null)
+            {
+                return Unauthorized();
+            }
 
             List<int> list = player.BodiesSkins.ToList();
-            if (!list.Contains(skinId)) return BadRequest(new { error = "Body skin not found" });
+            if (!list.Contains(skinId))
+            {
+                return BadRequest(new { error = "Body skin not found" });
+            }
 
             list.Remove(skinId);
             player.BodiesSkins = list.ToArray();
@@ -204,16 +187,21 @@ namespace MinefieldServer.Controllers
             return Ok(new { message = $"Removed body skin {skinId}" });
         }
 
-        // 9. Видалити скін ніг
         [HttpDelete("skins/legs/{skinId}")]
         [Authorize]
         public IActionResult RemoveLegsSkin(int skinId)
         {
             Player player = GetCurrentPlayer();
-            if (player == null) return Unauthorized();
+            if (player == null)
+            {
+                return Unauthorized();
+            }
 
             List<int> list = player.LegsSkins.ToList();
-            if (!list.Contains(skinId)) return BadRequest(new { error = "Legs skin not found" });
+            if (!list.Contains(skinId))
+            {
+                return BadRequest(new { error = "Legs skin not found" });
+            }
 
             list.Remove(skinId);
             player.LegsSkins = list.ToArray();
@@ -222,16 +210,21 @@ namespace MinefieldServer.Controllers
             return Ok(new { message = $"Removed legs skin {skinId}" });
         }
 
-        // 10. Видалити скін маски
         [HttpDelete("skins/mask/{skinId}")]
         [Authorize]
         public IActionResult RemoveMaskSkin(int skinId)
         {
             Player player = GetCurrentPlayer();
-            if (player == null) return Unauthorized();
+            if (player == null)
+            {
+                return Unauthorized();
+            }
 
             List<int> list = player.MasksSkins.ToList();
-            if (!list.Contains(skinId)) return BadRequest(new { error = "Mask skin not found" });
+            if (!list.Contains(skinId))
+            {
+                return BadRequest(new { error = "Mask skin not found" });
+            }
 
             list.Remove(skinId);
             player.MasksSkins = list.ToArray();
@@ -241,9 +234,8 @@ namespace MinefieldServer.Controllers
         }
     }
 
-    // DTO для вибору скіну у вигляді рядка
     public class SkinSelectionDto
     {
-        public string SelectedSkin { get; set; }
+        public string SelectedSkin { get; set; } = null!;
     }
 }
