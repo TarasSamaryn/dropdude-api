@@ -30,24 +30,26 @@ namespace MinefieldServer.Controllers
             _logger.LogInformation("Payload: {@Req}", request);
 
             if (string.IsNullOrWhiteSpace(request.Username))
+            {
                 return BadRequest("Username cannot be empty.");
+            }
 
             if (_db.Players.Any(p => p.Username == request.Username))
+            {
                 return BadRequest("User with this username already exists.");
+            }
 
             Player player = new Player
             {
-                Username     = request.Username,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                CreatedAt    = DateTime.UtcNow,
-                IsAdmin      = false,
-                
-                HeadsSkins = new int[] { 0,6,7 },
-                BodiesSkins = new int[] { 0,6,7 },
-                LegsSkins = new int[] { 0,6,7 },
-                MasksSkins = new int[] {0},
-                
-                LastSelectedSkin = "0.0.0.0",
+                Username        = request.Username,
+                PasswordHash    = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                CreatedAt       = DateTimeOffset.UtcNow,
+                IsAdmin         = false,
+                HeadsSkins      = "0,6,7",
+                BodiesSkins     = "0,6,7",
+                LegsSkins       = "0,6,7",
+                MasksSkins      = "0",
+                LastSelectedSkin = "0.0.0.0"
             };
 
             _db.Players.Add(player);
@@ -56,6 +58,7 @@ namespace MinefieldServer.Controllers
             _logger.LogInformation("✅ User {Username} registered successfully", player.Username);
             return Ok("User registered successfully.");
         }
+
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)

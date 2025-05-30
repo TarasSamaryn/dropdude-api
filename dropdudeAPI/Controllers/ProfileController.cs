@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using MinefieldServer.Data;
 using MinefieldServer.Models;
@@ -30,6 +33,62 @@ namespace MinefieldServer.Controllers
             return player;
         }
 
+        private Dictionary<int, int> ParseSkins(string skinsString)
+        {
+            var dict = new Dictionary<int, int>();
+            if (string.IsNullOrEmpty(skinsString))
+            {
+                return dict;
+            }
+
+            var parts = skinsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var part in parts)
+            {
+                if (part.Contains('-'))
+                {
+                    var tokens = part.Split('-', 2);
+                    if (int.TryParse(tokens[0], out int id) && int.TryParse(tokens[1], out int count))
+                    {
+                        dict[id] = count;
+                    }
+                }
+                else
+                {
+                    if (int.TryParse(part, out int id))
+                    {
+                        if (dict.ContainsKey(id))
+                        {
+                            dict[id]++;
+                        }
+                        else
+                        {
+                            dict[id] = 1;
+                        }
+                    }
+                }
+            }
+
+            return dict;
+        }
+
+        private string SerializeSkins(Dictionary<int, int> dict)
+        {
+            var parts = new List<string>();
+            foreach (var kv in dict)
+            {
+                if (kv.Value <= 1)
+                {
+                    parts.Add(kv.Key.ToString());
+                }
+                else
+                {
+                    parts.Add($"{kv.Key}-{kv.Value}");
+                }
+            }
+
+            return string.Join(",", parts);
+        }
+
         [HttpGet]
         [Authorize]
         public IActionResult GetProfile()
@@ -40,16 +99,21 @@ namespace MinefieldServer.Controllers
                 return Unauthorized(new { error = "Invalid token or player not found" });
             }
 
+            var headsDict  = ParseSkins(player.HeadsSkins);
+            var bodiesDict = ParseSkins(player.BodiesSkins);
+            var legsDict   = ParseSkins(player.LegsSkins);
+            var masksDict  = ParseSkins(player.MasksSkins);
+
             return Ok(new
             {
-                id = player.Id,
-                isAdmin = player.IsAdmin,
-                username = player.Username,
+                id               = player.Id,
+                isAdmin          = player.IsAdmin,
+                username         = player.Username,
                 lastSelectedSkin = player.LastSelectedSkin,
-                headsSkins = player.HeadsSkins,
-                bodiesSkins = player.BodiesSkins,
-                legsSkins = player.LegsSkins,
-                masksSkins = player.MasksSkins
+                headsSkins       = headsDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
+                bodiesSkins      = bodiesDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
+                legsSkins        = legsDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
+                masksSkins       = masksDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray()
             });
         }
 
@@ -63,9 +127,17 @@ namespace MinefieldServer.Controllers
                 return Unauthorized();
             }
 
-            List<int> list = player.HeadsSkins.ToList();
-            list.Add(skinId);
-            player.HeadsSkins = list.ToArray();
+            var dict = ParseSkins(player.HeadsSkins);
+            if (dict.ContainsKey(skinId))
+            {
+                dict[skinId]++;
+            }
+            else
+            {
+                dict[skinId] = 1;
+            }
+
+            player.HeadsSkins = SerializeSkins(dict);
             _db.SaveChanges();
 
             return Ok(new { message = $"Added head skin {skinId}" });
@@ -81,9 +153,17 @@ namespace MinefieldServer.Controllers
                 return Unauthorized();
             }
 
-            List<int> list = player.BodiesSkins.ToList();
-            list.Add(skinId);
-            player.BodiesSkins = list.ToArray();
+            var dict = ParseSkins(player.BodiesSkins);
+            if (dict.ContainsKey(skinId))
+            {
+                dict[skinId]++;
+            }
+            else
+            {
+                dict[skinId] = 1;
+            }
+
+            player.BodiesSkins = SerializeSkins(dict);
             _db.SaveChanges();
 
             return Ok(new { message = $"Added body skin {skinId}" });
@@ -99,9 +179,17 @@ namespace MinefieldServer.Controllers
                 return Unauthorized();
             }
 
-            List<int> list = player.LegsSkins.ToList();
-            list.Add(skinId);
-            player.LegsSkins = list.ToArray();
+            var dict = ParseSkins(player.LegsSkins);
+            if (dict.ContainsKey(skinId))
+            {
+                dict[skinId]++;
+            }
+            else
+            {
+                dict[skinId] = 1;
+            }
+
+            player.LegsSkins = SerializeSkins(dict);
             _db.SaveChanges();
 
             return Ok(new { message = $"Added legs skin {skinId}" });
@@ -117,9 +205,17 @@ namespace MinefieldServer.Controllers
                 return Unauthorized();
             }
 
-            List<int> list = player.MasksSkins.ToList();
-            list.Add(skinId);
-            player.MasksSkins = list.ToArray();
+            var dict = ParseSkins(player.MasksSkins);
+            if (dict.ContainsKey(skinId))
+            {
+                dict[skinId]++;
+            }
+            else
+            {
+                dict[skinId] = 1;
+            }
+
+            player.MasksSkins = SerializeSkins(dict);
             _db.SaveChanges();
 
             return Ok(new { message = $"Added mask skin {skinId}" });
@@ -151,14 +247,22 @@ namespace MinefieldServer.Controllers
                 return Unauthorized();
             }
 
-            List<int> list = player.HeadsSkins.ToList();
-            if (!list.Contains(skinId))
+            var dict = ParseSkins(player.HeadsSkins);
+            if (!dict.ContainsKey(skinId))
             {
                 return BadRequest(new { error = "Head skin not found" });
             }
 
-            list.Remove(skinId);
-            player.HeadsSkins = list.ToArray();
+            if (dict[skinId] > 1)
+            {
+                dict[skinId]--;
+            }
+            else
+            {
+                dict.Remove(skinId);
+            }
+
+            player.HeadsSkins = SerializeSkins(dict);
             _db.SaveChanges();
 
             return Ok(new { message = $"Removed head skin {skinId}" });
@@ -174,14 +278,22 @@ namespace MinefieldServer.Controllers
                 return Unauthorized();
             }
 
-            List<int> list = player.BodiesSkins.ToList();
-            if (!list.Contains(skinId))
+            var dict = ParseSkins(player.BodiesSkins);
+            if (!dict.ContainsKey(skinId))
             {
                 return BadRequest(new { error = "Body skin not found" });
             }
 
-            list.Remove(skinId);
-            player.BodiesSkins = list.ToArray();
+            if (dict[skinId] > 1)
+            {
+                dict[skinId]--;
+            }
+            else
+            {
+                dict.Remove(skinId);
+            }
+
+            player.BodiesSkins = SerializeSkins(dict);
             _db.SaveChanges();
 
             return Ok(new { message = $"Removed body skin {skinId}" });
@@ -197,14 +309,22 @@ namespace MinefieldServer.Controllers
                 return Unauthorized();
             }
 
-            List<int> list = player.LegsSkins.ToList();
-            if (!list.Contains(skinId))
+            var dict = ParseSkins(player.LegsSkins);
+            if (!dict.ContainsKey(skinId))
             {
                 return BadRequest(new { error = "Legs skin not found" });
             }
 
-            list.Remove(skinId);
-            player.LegsSkins = list.ToArray();
+            if (dict[skinId] > 1)
+            {
+                dict[skinId]--;
+            }
+            else
+            {
+                dict.Remove(skinId);
+            }
+
+            player.LegsSkins = SerializeSkins(dict);
             _db.SaveChanges();
 
             return Ok(new { message = $"Removed legs skin {skinId}" });
@@ -220,14 +340,22 @@ namespace MinefieldServer.Controllers
                 return Unauthorized();
             }
 
-            List<int> list = player.MasksSkins.ToList();
-            if (!list.Contains(skinId))
+            var dict = ParseSkins(player.MasksSkins);
+            if (!dict.ContainsKey(skinId))
             {
                 return BadRequest(new { error = "Mask skin not found" });
             }
 
-            list.Remove(skinId);
-            player.MasksSkins = list.ToArray();
+            if (dict[skinId] > 1)
+            {
+                dict[skinId]--;
+            }
+            else
+            {
+                dict.Remove(skinId);
+            }
+
+            player.MasksSkins = SerializeSkins(dict);
             _db.SaveChanges();
 
             return Ok(new { message = $"Removed mask skin {skinId}" });
