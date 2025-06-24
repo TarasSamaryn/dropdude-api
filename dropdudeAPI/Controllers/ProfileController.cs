@@ -113,7 +113,9 @@ namespace MinefieldServer.Controllers
                 headsSkins       = headsDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
                 bodiesSkins      = bodiesDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
                 legsSkins        = legsDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
-                masksSkins       = masksDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray()
+                masksSkins       = masksDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
+                rating = player.Rating,
+                monthlyWins = player.MonthlyWins,
             });
         }
 
