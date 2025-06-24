@@ -14,6 +14,9 @@ namespace MinefieldServer.Models
 
         // Час перемоги
         public DateTimeOffset OccurredAt { get; set; } = DateTimeOffset.UtcNow;
+        
+        // Завданий урон у бою
+        public int Damage { get; set; }
 
         // Навігаційне поле
         public Player Player { get; set; } = null!;

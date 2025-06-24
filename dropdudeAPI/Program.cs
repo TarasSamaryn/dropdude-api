@@ -2,12 +2,13 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MinefieldServer.Data;
 using MinefieldServer.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Слухаємо на порту 10000
+// --- Слухаємо на порту 10000 
 builder.WebHost.UseUrls("http://*:10000");
 
 // --- Logging ---
@@ -28,6 +29,36 @@ builder.Services.AddDbContext<AppDbContext>(opts =>
 
 // --- Controllers ---
 builder.Services.AddControllers();
+
+// --- Swagger / OpenAPI ---
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Minefield API V1", Version = "v1" });
+
+    // замінили ApiKey на Http-схему Bearer
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description  = "JWT Authorization header using the Bearer scheme",
+        Name         = "Authorization",
+        In           = ParameterLocation.Header,
+        Type         = SecuritySchemeType.Http,
+        Scheme       = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id   = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // --- CORS ---
 builder.Services.AddCors(options =>
@@ -64,8 +95,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
-//builder.Services.AddAuthorization();
+// --- Authorization policies ---
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireAdmin", policy =>
@@ -77,6 +107,14 @@ var app = builder.Build();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// --- Swagger middleware ---
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Minefield API V1");
+    c.RoutePrefix = ""; // відкривається на корені: http://localhost:10000/
+});
 
 // 1) Ендпоінт для отримання логів у форматі JSON
 app.MapGet("/logs", () =>
@@ -120,7 +158,6 @@ app.MapGet("/admin", async ctx =>
     ctx.Response.ContentType = "text/html; charset=utf-8";
     await ctx.Response.SendFileAsync(file);
 });
-
 
 // 4) Web API контролери
 app.MapControllers();

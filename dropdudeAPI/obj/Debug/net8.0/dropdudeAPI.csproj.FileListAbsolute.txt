@@ -226,3 +226,8 @@ D:\Work\Sayr0x_repositories\dropdude-api\dropdudeAPI\obj\Debug\net8.0\refint\dro
 D:\Work\Sayr0x_repositories\dropdude-api\dropdudeAPI\obj\Debug\net8.0\dropdudeAPI.pdb
 D:\Work\Sayr0x_repositories\dropdude-api\dropdudeAPI\obj\Debug\net8.0\dropdudeAPI.genruntimeconfig.cache
 D:\Work\Sayr0x_repositories\dropdude-api\dropdudeAPI\obj\Debug\net8.0\ref\dropdudeAPI.dll
+D:\Work\Sayr0x_repositories\dropdude-api\dropdudeAPI\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\Work\Sayr0x_repositories\dropdude-api\dropdudeAPI\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Work\Sayr0x_repositories\dropdude-api\dropdudeAPI\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Work\Sayr0x_repositories\dropdude-api\dropdudeAPI\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Work\Sayr0x_repositories\dropdude-api\dropdudeAPI\obj\Debug\net8.0\dropdudeAPI.MvcApplicationPartsAssemblyInfo.cs

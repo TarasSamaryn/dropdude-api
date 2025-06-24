@@ -28,5 +28,6 @@ namespace MinefieldServer.Models
         public string MasksSkins   { get; set; } = string.Empty;
 
         public int MonthlyWins { get; set; } = 0;
+        public double Rating { get; set; } = 0;
     }
 }

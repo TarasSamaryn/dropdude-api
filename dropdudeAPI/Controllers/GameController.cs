@@ -22,21 +22,26 @@ namespace MinefieldServer.Controllers
         public class RecordResultDto
         {
             public int WinnerId { get; set; }
+            public int Damage { get; set; }
         }
 
         [HttpPost("finish")]
-        [Authorize]  // раніше RequireServiceToken, тепер всі залогінені
+        [Authorize]
         public async Task<IActionResult> Finish([FromBody] RecordResultDto dto)
         {
             _logger.LogInformation("🔔 Finish hit: {@Dto}", dto);
 
+            // 1) Зберігаємо результат бою з уронем
             var result = new GameResult
             {
                 PlayerId   = dto.WinnerId,
-                OccurredAt = DateTimeOffset.UtcNow
+                OccurredAt = DateTimeOffset.UtcNow,
+                Damage     = dto.Damage
             };
             _db.GameResults.Add(result);
+            await _db.SaveChangesAsync();
 
+            // 2) Шукаємо гравця
             var player = await _db.Players.FindAsync(dto.WinnerId);
             if (player == null)
             {
@@ -44,18 +49,34 @@ namespace MinefieldServer.Controllers
                 return BadRequest("Гравець не знайдений");
             }
 
+            // 3) Збільшуємо перемоги
             player.MonthlyWins++;
+
+            // 4) Розраховуємо рейтинг — середній урон за останні 20 боїв (включно з поточним)
+            var last20 = await _db.GameResults
+                .Where(r => r.PlayerId == dto.WinnerId)
+                .OrderByDescending(r => r.OccurredAt)
+                .Take(20)
+                .ToListAsync();
+
+            player.Rating = last20.Any() ? last20.Average(r => r.Damage) : 0;
+
             await _db.SaveChangesAsync();
 
             _logger.LogInformation(
-                "✅ Recorded win and ++MonthlyWins for PlayerId {Id}",
-                dto.WinnerId
+                "✅ Recorded win, updated MonthlyWins and Rating for PlayerId {Id}: Wins={Wins}, Rating={Rating}",
+                dto.WinnerId, player.MonthlyWins, player.Rating
             );
-            return Ok(new { message = "Переможець зафіксовано" });
+
+            return Ok(new
+            {
+                message   = "Переможець зафіксовано",
+                newRating = player.Rating
+            });
         }
 
         [HttpGet("leaderboard")]
-        [Authorize]  // захищено JWT
+        [Authorize]
         public async Task<IActionResult> GetLeaderboard()
         {
             _logger.LogInformation("🔔 Leaderboard hit");
@@ -117,20 +138,19 @@ namespace MinefieldServer.Controllers
             _logger.LogInformation("🔔 ResetMonthlyWins hit");
 
             List<Player> players = await _db.Players.ToListAsync();
-            
             foreach (Player p in players)
             {
                 p.MonthlyWins = 0;
             }
-            
+
             await _db.SaveChangesAsync();
 
             _logger.LogInformation("✅ MonthlyWins reset for all players");
             return Ok("Лічильники скинуто");
         }
-        
+
         [HttpGet("leaderboard/all")]
-        [Authorize]  // захищено JWT
+        [Authorize]
         public async Task<IActionResult> GetFullLeaderboard()
         {
             var monthStart = new DateTimeOffset(
@@ -151,6 +171,18 @@ namespace MinefieldServer.Controllers
                       (g, p) => new { p.Username, g.Wins })
                 .ToListAsync();
 
+            return Ok(list);
+        }
+        
+        [HttpGet("rating-leaderboard")]
+        [Authorize]
+        public async Task<IActionResult> GetRatingLeaderboard()
+        {
+            _logger.LogInformation("🔔 Rating leaderboard hit");
+            var list = await _db.Players
+                .OrderByDescending(p => p.Rating)
+                .Select(p => new { p.Username, p.Rating })
+                .ToListAsync();
             return Ok(list);
         }
     }
