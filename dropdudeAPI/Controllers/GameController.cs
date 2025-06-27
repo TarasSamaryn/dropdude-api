@@ -30,37 +30,35 @@ namespace MinefieldServer.Controllers
         public async Task<IActionResult> Finish([FromBody] RecordResultDto dto)
         {
             _logger.LogInformation("🔔 Finish hit: {@Dto}", dto);
-
-            // 1) Зберігаємо результат бою з уронем
-            var result = new GameResult
+            
+            GameResult result = new GameResult
             {
                 PlayerId   = dto.WinnerId,
                 OccurredAt = DateTimeOffset.UtcNow,
                 Damage     = dto.Damage
             };
+            
             _db.GameResults.Add(result);
             await _db.SaveChangesAsync();
-
-            // 2) Шукаємо гравця
-            var player = await _db.Players.FindAsync(dto.WinnerId);
+            
+            Player? player = await _db.Players.FindAsync(dto.WinnerId);
+            
             if (player == null)
             {
                 _logger.LogWarning("⚠️ Player not found: {Id}", dto.WinnerId);
-                return BadRequest("Гравець не знайдений");
+                return BadRequest("Player not found");
             }
-
-            // 3) Збільшуємо перемоги
+            
             player.MonthlyWins++;
-
-            // 4) Розраховуємо рейтинг — середній урон за останні 20 боїв (включно з поточним)
-            var last20 = await _db.GameResults
+            
+            List<GameResult> last20 = await _db.GameResults
                 .Where(r => r.PlayerId == dto.WinnerId)
                 .OrderByDescending(r => r.OccurredAt)
                 .Take(20)
                 .ToListAsync();
-
+            
             player.Rating = last20.Any() ? last20.Average(r => r.Damage) : 0;
-
+            
             await _db.SaveChangesAsync();
 
             _logger.LogInformation(
@@ -70,7 +68,7 @@ namespace MinefieldServer.Controllers
 
             return Ok(new
             {
-                message   = "Переможець зафіксовано",
+                message   = "Winner is fixed",
                 newRating = player.Rating
             });
         }
@@ -81,7 +79,7 @@ namespace MinefieldServer.Controllers
         {
             _logger.LogInformation("🔔 Leaderboard hit");
 
-            var monthStart = new DateTimeOffset(
+            DateTimeOffset monthStart = new DateTimeOffset(
                 DateTime.UtcNow.Year,
                 DateTime.UtcNow.Month,
                 1, 0, 0, 0,
@@ -98,13 +96,11 @@ namespace MinefieldServer.Controllers
             if (top == null)
             {
                 _logger.LogWarning("⚠️ No monthly results");
-                return NotFound("Немає результатів за місяць");
+                return NotFound("No results for the month");
             }
 
-            _logger.LogInformation(
-                "✅ Leaderboard: PlayerId {Id} → {Wins} wins",
-                top.PlayerId, top.Wins
-            );
+            _logger.LogInformation("✅ Leaderboard: PlayerId {Id} → {Wins} wins", top.PlayerId, top.Wins);
+            
             return Ok(top);
         }
 
@@ -113,14 +109,12 @@ namespace MinefieldServer.Controllers
         {
             _logger.LogInformation("🔔 Champion hit");
 
-            var champ = await _db.Players
-                .OrderByDescending(p => p.MonthlyWins)
-                .FirstOrDefaultAsync();
+            Player? champ = await _db.Players.OrderByDescending(p => p.MonthlyWins).FirstOrDefaultAsync();
 
             if (champ == null)
             {
                 _logger.LogWarning("⚠️ No players found");
-                return NotFound("Немає гравців");
+                return NotFound("No players");
             }
 
             return Ok(new
@@ -146,14 +140,14 @@ namespace MinefieldServer.Controllers
             await _db.SaveChangesAsync();
 
             _logger.LogInformation("✅ MonthlyWins reset for all players");
-            return Ok("Лічильники скинуто");
+            return Ok("Counters reset");
         }
 
         [HttpGet("leaderboard/all")]
         [Authorize]
         public async Task<IActionResult> GetFullLeaderboard()
         {
-            var monthStart = new DateTimeOffset(
+            DateTimeOffset monthStart = new DateTimeOffset(
                 DateTime.UtcNow.Year,
                 DateTime.UtcNow.Month,
                 1, 0, 0, 0,
@@ -183,6 +177,7 @@ namespace MinefieldServer.Controllers
                 .OrderByDescending(p => p.Rating)
                 .Select(p => new { p.Username, p.Rating })
                 .ToListAsync();
+            
             return Ok(list);
         }
     }

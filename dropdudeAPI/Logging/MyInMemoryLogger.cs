@@ -25,11 +25,13 @@ namespace MinefieldServer.Logging
             Exception exception,
             Func<TState, Exception, string> formatter)
         {
-            var message = $"{DateTime.Now:HH:mm:ss} [{logLevel}] {formatter(state, exception)}";
+            string message = $"{DateTime.Now:HH:mm:ss} [{logLevel}] {formatter(state, exception)}";
             _logs.Enqueue(message);
 
             while (_logs.Count > 1000)
+            {
                 _logs.TryDequeue(out _);
+            }
         }
 
         public static string[] GetLogs() => _logs.ToArray();

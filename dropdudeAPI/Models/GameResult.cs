@@ -8,17 +8,9 @@ namespace MinefieldServer.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
-        [ForeignKey(nameof(Player))]
-        public int PlayerId { get; set; }
-
-        // Час перемоги
+        [ForeignKey(nameof(Player))] public int PlayerId { get; set; }
         public DateTimeOffset OccurredAt { get; set; } = DateTimeOffset.UtcNow;
-        
-        // Завданий урон у бою
         public int Damage { get; set; }
-
-        // Навігаційне поле
         public Player Player { get; set; } = null!;
     }
 }

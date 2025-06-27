@@ -39,6 +39,7 @@ namespace MinefieldServer.Controllers
                 return BadRequest("User with this username already exists.");
             }
 
+            //added free skins for new player 
             Player player = new Player
             {
                 Username        = request.Username,
@@ -90,6 +91,7 @@ namespace MinefieldServer.Controllers
                         new Claim(ClaimTypes.Name, player.Username),
                         new Claim("isAdmin", player.IsAdmin.ToString())
                     }),
+                    
                     Expires = DateTime.UtcNow.AddHours(2),
                     SigningCredentials = new SigningCredentials(
                         new SymmetricSecurityKey(key),
@@ -100,7 +102,10 @@ namespace MinefieldServer.Controllers
                 string? jwt = tokenHandler.WriteToken(token);
 
                 _logger.LogInformation("✅ User {Username} logged in, JWT issued", player.Username);
-                return Ok(new { token = jwt });
+                return Ok(new
+                {
+                    token = jwt
+                });
             }
             catch (Exception ex)
             {
