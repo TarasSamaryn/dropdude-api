@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MinefieldServer.Models
+namespace DropDudeAPI.Models
 {
     public class Player
     {

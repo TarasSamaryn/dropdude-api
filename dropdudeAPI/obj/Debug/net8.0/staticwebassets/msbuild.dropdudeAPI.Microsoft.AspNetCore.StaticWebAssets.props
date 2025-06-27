@@ -2,9 +2,9 @@
   <ItemGroup>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\admin\index.html'))">
       <SourceType>Package</SourceType>
-      <SourceId>dropdudeAPI</SourceId>
+      <SourceId>DropDudeAPI</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/dropdudeAPI</BasePath>
+      <BasePath>_content/DropDudeAPI</BasePath>
       <RelativePath>admin/index.html</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -20,9 +20,9 @@
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\admin\leaderboard.html'))">
       <SourceType>Package</SourceType>
-      <SourceId>dropdudeAPI</SourceId>
+      <SourceId>DropDudeAPI</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/dropdudeAPI</BasePath>
+      <BasePath>_content/DropDudeAPI</BasePath>
       <RelativePath>admin/leaderboard.html</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -38,9 +38,9 @@
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\admin\logview.html'))">
       <SourceType>Package</SourceType>
-      <SourceId>dropdudeAPI</SourceId>
+      <SourceId>DropDudeAPI</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/dropdudeAPI</BasePath>
+      <BasePath>_content/DropDudeAPI</BasePath>
       <RelativePath>admin/logview.html</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>

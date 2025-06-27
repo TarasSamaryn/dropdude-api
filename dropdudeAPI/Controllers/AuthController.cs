@@ -1,12 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using DropDudeAPI.Data;
+using DropDudeAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MinefieldServer.Data;
-using MinefieldServer.Models;
 
-namespace MinefieldServer.Controllers
+namespace DropDudeAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

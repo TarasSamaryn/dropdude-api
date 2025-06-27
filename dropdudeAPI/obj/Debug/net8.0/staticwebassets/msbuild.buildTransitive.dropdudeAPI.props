@@ -1,3 +1,3 @@
 ﻿<Project>
-  <Import Project="..\buildMultiTargeting\dropdudeAPI.props" />
+  <Import Project="..\buildMultiTargeting\DropDudeAPI.props" />
 </Project>

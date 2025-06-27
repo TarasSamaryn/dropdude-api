@@ -1,10 +1,10 @@
+using System.Security.Claims;
+using DropDudeAPI.Data;
+using DropDudeAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using MinefieldServer.Data;
-using MinefieldServer.Models;
 
-namespace MinefieldServer.Controllers
+namespace DropDudeAPI.Controllers
 {
     [ApiController]
     [Route("profile")]

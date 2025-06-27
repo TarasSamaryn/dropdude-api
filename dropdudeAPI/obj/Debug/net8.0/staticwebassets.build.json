@@ -1,27 +1,27 @@
 {
   "Version": 1,
-  "Hash": "EokiSgKpJvDQiBW6lSTnEat25EstIe/IQnusYMsFzaw=",
-  "Source": "dropdudeAPI",
-  "BasePath": "_content/dropdudeAPI",
+  "Hash": "uhTYxf45YzgauuvGDshBYEGe9cRxBiNYAgqsFRTBIbY=",
+  "Source": "DropDudeAPI",
+  "BasePath": "_content/DropDudeAPI",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [
     {
-      "Name": "dropdudeAPI\\wwwroot",
-      "Source": "dropdudeAPI",
+      "Name": "DropDudeAPI\\wwwroot",
+      "Source": "DropDudeAPI",
       "ContentRoot": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\",
-      "BasePath": "_content/dropdudeAPI",
+      "BasePath": "_content/DropDudeAPI",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
       "Identity": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\index.html",
-      "SourceId": "dropdudeAPI",
+      "SourceId": "DropDudeAPI",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\",
-      "BasePath": "_content/dropdudeAPI",
+      "BasePath": "_content/DropDudeAPI",
       "RelativePath": "admin/index#[.{fingerprint}]?.html",
       "AssetKind": "All",
       "AssetMode": "All",
@@ -39,10 +39,10 @@
     },
     {
       "Identity": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\leaderboard.html",
-      "SourceId": "dropdudeAPI",
+      "SourceId": "DropDudeAPI",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\",
-      "BasePath": "_content/dropdudeAPI",
+      "BasePath": "_content/DropDudeAPI",
       "RelativePath": "admin/leaderboard#[.{fingerprint}]?.html",
       "AssetKind": "All",
       "AssetMode": "All",
@@ -60,10 +60,10 @@
     },
     {
       "Identity": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\admin\\logview.html",
-      "SourceId": "dropdudeAPI",
+      "SourceId": "DropDudeAPI",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\wwwroot\\",
-      "BasePath": "_content/dropdudeAPI",
+      "BasePath": "_content/DropDudeAPI",
       "RelativePath": "admin/logview#[.{fingerprint}]?.html",
       "AssetKind": "All",
       "AssetMode": "All",

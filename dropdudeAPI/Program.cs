@@ -1,10 +1,10 @@
 using System.Text;
+using DropDudeAPI.Data;
+using DropDudeAPI.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MinefieldServer.Data;
-using MinefieldServer.Logging;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +37,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Minefield API V1", 
+        Title = "DropDude API V1", 
         Version = "v1"
     });
 
@@ -119,7 +119,7 @@ app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Minefield API V1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "DropDude API V1");
     c.RoutePrefix = ""; // відкривається на корені: http://localhost:10000/
 });
 

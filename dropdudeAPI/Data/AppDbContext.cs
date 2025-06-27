@@ -1,7 +1,7 @@
+using DropDudeAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using MinefieldServer.Models;
 
-namespace MinefieldServer.Data;
+namespace DropDudeAPI.Data;
 
 public class AppDbContext : DbContext
 {

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "3nNI8j9JTpg=",
+  "dgSpecHash": "3h+LIMer8M8=",
   "success": true,
   "projectFilePath": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\dropdudeAPI.csproj",
   "expectedPackageFiles": [
@@ -67,7 +67,7 @@
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "dropdudeAPI depends on Npgsql.EntityFrameworkCore.PostgreSQL (>= 8.0.7) but Npgsql.EntityFrameworkCore.PostgreSQL 8.0.7 was not found. Npgsql.EntityFrameworkCore.PostgreSQL 8.0.8 was resolved instead.",
+      "message": "DropDudeAPI depends on Npgsql.EntityFrameworkCore.PostgreSQL (>= 8.0.7) but Npgsql.EntityFrameworkCore.PostgreSQL 8.0.7 was not found. Npgsql.EntityFrameworkCore.PostgreSQL 8.0.8 was resolved instead.",
       "libraryId": "Npgsql.EntityFrameworkCore.PostgreSQL",
       "targetGraphs": [
         "net8.0"

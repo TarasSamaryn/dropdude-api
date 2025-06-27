@@ -13,24 +13,24 @@
       "PackagePath": "staticwebassets\\admin\\logview.html"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.dropdudeAPI.props",
-      "PackagePath": "build\\dropdudeAPI.props"
-    },
-    {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.dropdudeAPI.props",
-      "PackagePath": "buildMultiTargeting\\dropdudeAPI.props"
-    },
-    {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.dropdudeAPI.props",
-      "PackagePath": "buildTransitive\\dropdudeAPI.props"
-    },
-    {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.dropdudeAPI.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.DropDudeAPI.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },
     {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.dropdudeAPI.Microsoft.AspNetCore.StaticWebAssets.props",
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.DropDudeAPI.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.DropDudeAPI.props",
+      "PackagePath": "build\\DropDudeAPI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.DropDudeAPI.props",
+      "PackagePath": "buildMultiTargeting\\DropDudeAPI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.DropDudeAPI.props",
+      "PackagePath": "buildTransitive\\DropDudeAPI.props"
     }
   ],
   "ElementsToRemove": []
