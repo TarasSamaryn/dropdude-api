@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using DropDudeAPI.Data;
 using DropDudeAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -17,415 +21,165 @@ namespace DropDudeAPI.Controllers
             _db = db;
         }
 
-        private Player GetCurrentPlayer()
+        // Асинхронний хелпер для отримання поточного гравця
+        private async Task<Player?> GetAuthorizedPlayerAsync()
         {
-            string idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            bool parsed = Int32.TryParse(idClaim, out int id);
-            if (parsed == false)
-            {
+            var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(idClaim, out var userId))
                 return null;
-            }
 
-            Player player = _db.Players.Find(id);
-            return player;
+            return await _db.Players.FindAsync(userId);
         }
 
+        // Розбір рядка скінів у словник { skinId: count }
         private Dictionary<int, int> ParseSkins(string skinsString)
         {
-            Dictionary<int, int> dict = new Dictionary<int, int>();
-            
-            if (string.IsNullOrEmpty(skinsString))
-            {
+            var dict = new Dictionary<int, int>();
+            if (string.IsNullOrWhiteSpace(skinsString))
                 return dict;
-            }
 
-            string[] parts = skinsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            
-            foreach (string part in parts)
+            var parts = skinsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var part in parts)
             {
                 if (part.Contains('-'))
                 {
-                    string[] tokens = part.Split('-', 2);
-                    
-                    if (int.TryParse(tokens[0], out int id) && int.TryParse(tokens[1], out int count))
+                    var tokens = part.Split('-', 2);
+                    if (int.TryParse(tokens[0], out var id) &&
+                        int.TryParse(tokens[1], out var count))
                     {
                         dict[id] = count;
                     }
                 }
-                else
+                else if (int.TryParse(part, out var id))
                 {
-                    if (int.TryParse(part, out int id))
-                    {
-                        if (dict.ContainsKey(id))
-                        {
-                            dict[id]++;
-                        }
-                        else
-                        {
-                            dict[id] = 1;
-                        }
-                    }
+                    dict[id] = dict.GetValueOrDefault(id) + 1;
                 }
             }
 
             return dict;
         }
 
+        // Збирання словника скінів назад у рядок
         private string SerializeSkins(Dictionary<int, int> dict)
         {
-            List<string> parts = new List<string>();
-            
-            foreach (KeyValuePair<int, int> kv in dict)
+            var parts = new List<string>();
+            foreach (var kv in dict)
             {
-                if (kv.Value <= 1)
-                {
-                    parts.Add(kv.Key.ToString());
-                }
-                else
-                {
-                    parts.Add($"{kv.Key}-{kv.Value}");
-                }
+                parts.Add(kv.Value > 1
+                    ? $"{kv.Key}-{kv.Value}"
+                    : kv.Key.ToString());
             }
-
             return string.Join(",", parts);
         }
 
+        // GET /profile
         [HttpGet]
         [Authorize]
-        public IActionResult GetProfile()
+        public async Task<ActionResult<ProfileDto>> GetProfile()
         {
-            Player player = GetCurrentPlayer();
-            
+            var player = await GetAuthorizedPlayerAsync();
             if (player == null)
-            {
-                return Unauthorized(new
-                {
-                    error = "Invalid token or player not found"
-                });
-            }
+                return Unauthorized(new { error = "Invalid token or player not found" });
 
-            Dictionary<int, int> headsDict  = ParseSkins(player.HeadsSkins);
-            Dictionary<int, int> bodiesDict = ParseSkins(player.BodiesSkins);
-            Dictionary<int, int> legsDict   = ParseSkins(player.LegsSkins);
-            Dictionary<int, int> masksDict  = ParseSkins(player.MasksSkins);
+            var skinDict = ParseSkins(player.BodiesSkins);
+            var bodiesSkins = skinDict
+                .SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value))
+                .ToArray();
 
-            return Ok(new
-            {
-                id = player.Id,
-                isAdmin = player.IsAdmin,
-                username = player.Username,
-                lastSelectedSkin = player.LastSelectedSkin,
-                headsSkins = headsDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
-                bodiesSkins = bodiesDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
-                legsSkins = legsDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
-                masksSkins = masksDict.SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value)).ToArray(),
-                rating = player.Rating,
-                monthlyWins = player.MonthlyWins,
-            });
+            var dto = new ProfileDto(
+                Id: player.Id,
+                IsAdmin: player.IsAdmin,
+                Username: player.Username,
+                LastSelectedSkin: player.LastSelectedSkin,
+                BodiesSkins: bodiesSkins,
+                Rating: player.Rating,
+                MonthlyWins: player.MonthlyWins
+            );
+
+            return Ok(dto);
         }
 
-        [HttpPost("skins/head/{skinId}")]
-        [Authorize]
-        public IActionResult AddHeadSkin(int skinId)
-        {
-            Player player = GetCurrentPlayer();
-            
-            if (player == null)
-            {
-                return Unauthorized();
-            }
-
-            Dictionary<int, int> dict = ParseSkins(player.HeadsSkins);
-            
-            if (dict.ContainsKey(skinId))
-            {
-                dict[skinId]++;
-            }
-            else
-            {
-                dict[skinId] = 1;
-            }
-
-            player.HeadsSkins = SerializeSkins(dict);
-            _db.SaveChanges();
-
-            return Ok(new
-            {
-                message = $"Added head skin {skinId}"
-            });
-        }
-
+        // POST /profile/skins/body/{skinId}
         [HttpPost("skins/body/{skinId}")]
         [Authorize]
-        public IActionResult AddBodySkin(int skinId)
-        {
-            Player player = GetCurrentPlayer();
-            
-            if (player == null)
-            {
-                return Unauthorized();
-            }
+        public Task<IActionResult> AddBodySkin(int skinId)
+            => ModifySkins(
+                getRaw: p => p.BodiesSkins,
+                setRaw: (p, raw) => p.BodiesSkins = raw,
+                skinId: skinId,
+                delta: +1,
+                successMessage: $"Added body skin {skinId}"
+            );
 
-            Dictionary<int, int> dict = ParseSkins(player.BodiesSkins);
-            
-            if (dict.ContainsKey(skinId))
-            {
-                dict[skinId]++;
-            }
-            else
-            {
-                dict[skinId] = 1;
-            }
-
-            player.BodiesSkins = SerializeSkins(dict);
-            _db.SaveChanges();
-
-            return Ok(new
-            {
-                message = $"Added body skin {skinId}"
-            });
-        }
-
-        [HttpPost("skins/legs/{skinId}")]
-        [Authorize]
-        public IActionResult AddLegsSkin(int skinId)
-        {
-            Player player = GetCurrentPlayer();
-            
-            if (player == null)
-            {
-                return Unauthorized();
-            }
-
-            Dictionary<int, int> dict = ParseSkins(player.LegsSkins);
-            
-            if (dict.ContainsKey(skinId))
-            {
-                dict[skinId]++;
-            }
-            else
-            {
-                dict[skinId] = 1;
-            }
-
-            player.LegsSkins = SerializeSkins(dict);
-            _db.SaveChanges();
-
-            return Ok(new
-            {
-                message = $"Added legs skin {skinId}"
-            });
-        }
-
-        [HttpPost("skins/mask/{skinId}")]
-        [Authorize]
-        public IActionResult AddMaskSkin(int skinId)
-        {
-            Player player = GetCurrentPlayer();
-            
-            if (player == null)
-            {
-                return Unauthorized();
-            }
-
-            Dictionary<int, int> dict = ParseSkins(player.MasksSkins);
-            
-            if (dict.ContainsKey(skinId))
-            {
-                dict[skinId]++;
-            }
-            else
-            {
-                dict[skinId] = 1;
-            }
-
-            player.MasksSkins = SerializeSkins(dict);
-            _db.SaveChanges();
-
-            return Ok(new
-            {
-                message = $"Added mask skin {skinId}"
-            });
-        }
-
-        [HttpPost("skin/select")]
-        [Authorize]
-        public IActionResult SelectSkin([FromBody] SkinSelectionDto dto)
-        {
-            Player player = GetCurrentPlayer();
-            
-            if (player == null)
-            {
-                return Unauthorized(new
-                {
-                    error = "Invalid token or player not found"
-                });
-            }
-
-            player.LastSelectedSkin = dto.SelectedSkin;
-            _db.SaveChanges();
-
-            return Ok(new
-            {
-                message = $"Selected skin {dto.SelectedSkin}"
-            });
-        }
-
-        [HttpDelete("skins/head/{skinId}")]
-        [Authorize]
-        public IActionResult RemoveHeadSkin(int skinId)
-        {
-            Player player = GetCurrentPlayer();
-            
-            if (player == null)
-            {
-                return Unauthorized();
-            }
-
-            Dictionary<int, int> dict = ParseSkins(player.HeadsSkins);
-            
-            if (!dict.ContainsKey(skinId))
-            {
-                return BadRequest(new
-                {
-                    error = "Head skin not found"
-                });
-            }
-
-            if (dict[skinId] > 1)
-            {
-                dict[skinId]--;
-            }
-            else
-            {
-                dict.Remove(skinId);
-            }
-
-            player.HeadsSkins = SerializeSkins(dict);
-            _db.SaveChanges();
-
-            return Ok(new
-            {
-                message = $"Removed head skin {skinId}"
-            });
-        }
-
+        // DELETE /profile/skins/body/{skinId}
         [HttpDelete("skins/body/{skinId}")]
         [Authorize]
-        public IActionResult RemoveBodySkin(int skinId)
+        public Task<IActionResult> RemoveBodySkin(int skinId)
+            => ModifySkins(
+                getRaw: p => p.BodiesSkins,
+                setRaw: (p, raw) => p.BodiesSkins = raw,
+                skinId: skinId,
+                delta: -1,
+                successMessage: $"Removed body skin {skinId}"
+            );
+
+        // POST /profile/skin/select
+        [HttpPost("skin/select")]
+        [Authorize]
+        public async Task<IActionResult> SelectSkin([FromBody] SkinSelectionDto dto)
         {
-            Player player = GetCurrentPlayer();
-            
+            var player = await GetAuthorizedPlayerAsync();
             if (player == null)
-            {
-                return Unauthorized();
-            }
+                return Unauthorized(new { error = "Invalid token or player not found" });
 
-            Dictionary<int, int> dict = ParseSkins(player.BodiesSkins);
-            
-            if (!dict.ContainsKey(skinId))
-            {
-                return BadRequest(new
-                {
-                    error = "Body skin not found"
-                });
-            }
+            player.LastSelectedSkin = dto.SelectedSkin;
+            await _db.SaveChangesAsync();
 
-            if (dict[skinId] > 1)
-            {
-                dict[skinId]--;
-            }
-            else
-            {
-                dict.Remove(skinId);
-            }
-
-            player.BodiesSkins = SerializeSkins(dict);
-            _db.SaveChanges();
-
-            return Ok(new
-            {
-                message = $"Removed body skin {skinId}"
-            });
+            return Ok(new { message = $"Selected skin {dto.SelectedSkin}" });
         }
 
-        [HttpDelete("skins/legs/{skinId}")]
-        [Authorize]
-        public IActionResult RemoveLegsSkin(int skinId)
+        // Узагальнений метод для додавання/видалення скінів
+        private async Task<IActionResult> ModifySkins(
+            Func<Player, string> getRaw,
+            Action<Player, string> setRaw,
+            int skinId,
+            int delta,
+            string successMessage)
         {
-            Player player = GetCurrentPlayer();
-            
+            var player = await GetAuthorizedPlayerAsync();
             if (player == null)
-            {
                 return Unauthorized();
-            }
 
-            Dictionary<int, int> dict = ParseSkins(player.LegsSkins);
-            
-            if (!dict.ContainsKey(skinId))
-            {
-                return BadRequest(new
-                {
-                    error = "Legs skin not found"
-                });
-            }
+            var dict = ParseSkins(getRaw(player));
 
-            if (dict[skinId] > 1)
-            {
-                dict[skinId]--;
-            }
-            else
-            {
+            if (!dict.ContainsKey(skinId) && delta < 0)
+                return NotFound(new { error = "Skin not found" });
+
+            dict[skinId] = dict.GetValueOrDefault(skinId) + delta;
+            if (dict[skinId] <= 0)
                 dict.Remove(skinId);
-            }
 
-            player.LegsSkins = SerializeSkins(dict);
-            _db.SaveChanges();
+            setRaw(player, SerializeSkins(dict));
+            await _db.SaveChangesAsync();
 
-            return Ok(new
-            {
-                message = $"Removed legs skin {skinId}"
-            });
-        }
-
-        [HttpDelete("skins/mask/{skinId}")]
-        [Authorize]
-        public IActionResult RemoveMaskSkin(int skinId)
-        {
-            Player player = GetCurrentPlayer();
-            if (player == null)
-            {
-                return Unauthorized();
-            }
-
-            Dictionary<int, int> dict = ParseSkins(player.MasksSkins);
-            
-            if (!dict.ContainsKey(skinId))
-            {
-                return BadRequest(new
-                {
-                    error = "Mask skin not found"
-                });
-            }
-
-            if (dict[skinId] > 1)
-            {
-                dict[skinId]--;
-            }
-            else
-            {
-                dict.Remove(skinId);
-            }
-
-            player.MasksSkins = SerializeSkins(dict);
-            _db.SaveChanges();
-
-            return Ok(new { message = $"Removed mask skin {skinId}" });
+            return Ok(new { message = successMessage });
         }
     }
 
+    // DTO для відповіді GetProfile
+    public record ProfileDto(
+        int Id,
+        bool IsAdmin,
+        string Username,
+        string LastSelectedSkin,
+        int[] BodiesSkins,
+        double Rating,
+        int MonthlyWins
+    );
+
+    // DTO для вибору скіна
     public class SkinSelectionDto
     {
-        public string SelectedSkin { get; set; } = null!;
+        public string SelectedSkin { get; set; } = string.Empty;
     }
 }

@@ -46,11 +46,8 @@ namespace DropDudeAPI.Controllers
                 PasswordHash    = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 CreatedAt       = DateTimeOffset.UtcNow,
                 IsAdmin         = false,
-                HeadsSkins      = "0,6,7",
                 BodiesSkins     = "0,6,7",
-                LegsSkins       = "0,6,7",
-                MasksSkins      = "0",
-                LastSelectedSkin = "0.0.0.0"
+                LastSelectedSkin = "0"
             };
 
             _db.Players.Add(player);

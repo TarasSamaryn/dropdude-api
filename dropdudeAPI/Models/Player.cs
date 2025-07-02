@@ -13,10 +13,7 @@ namespace DropDudeAPI.Models
         [Required] public string PasswordHash { get; set; } = null!;
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public string LastSelectedSkin { get; set; } = null!;
-        public string HeadsSkins   { get; set; } = string.Empty;
         public string BodiesSkins  { get; set; } = string.Empty;
-        public string LegsSkins    { get; set; } = string.Empty;
-        public string MasksSkins   { get; set; } = string.Empty;
         public int MonthlyWins { get; set; } = 0;
         public double Rating { get; set; } = 0;
     }

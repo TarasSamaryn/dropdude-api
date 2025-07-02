@@ -2941,7 +2941,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\TorasDesktop\\.nuget\\packages\\": {},
+    "C:\\Users\\Toras\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
@@ -2950,14 +2950,14 @@
       "projectUniqueName": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\dropdudeAPI.csproj",
       "projectName": "DropDudeAPI",
       "projectPath": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\dropdudeAPI.csproj",
-      "packagesPath": "C:\\Users\\TorasDesktop\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\Toras\\.nuget\\packages\\",
       "outputPath": "D:\\Work\\Sayr0x_repositories\\dropdude-api\\dropdudeAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\TorasDesktop\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Toras\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -2984,7 +2984,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.100"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net8.0": {
@@ -3034,7 +3034,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
