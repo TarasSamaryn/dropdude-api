@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <title>Admin Panel</title>
+    <style>
+        body { background: #121212; color: #eee; font-family: sans-serif; padding: 2em; display: flex; justify-content: center; }
+        .card { max-width: 320px; width: 100%; background: #1e1e1e; padding: 1.5em; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); text-align: center; }
+        button { width: 100%; margin: 0.5em 0; padding: 0.5em; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; background: #3a3a3a; color: #fff; }
+        button:hover { background: #4e4e4e; }
+        #msg { margin-top: 0.5em; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h3>Admin Panel</h3>
+    <button id="viewLeaderboard">View Leaderboard</button>
+    <button id="viewLogs">View Logs</button>
+    <button id="resetMonthly">Reset Monthly Wins</button>
+    <div id="msg"></div>
+</div>
+<script>
+    const token = localStorage.getItem('jwt');
+    if (!token) window.location.href = 'login.html';
+
+    document.getElementById('viewLeaderboard').addEventListener('click', () => {
+        window.location.href = 'leaderboard.html';
+    });
+
+    document.getElementById('viewLogs').addEventListener('click', () => {
+        window.location.href = 'logview.html';
+    });
+
+    document.getElementById('resetMonthly').addEventListener('click', async () => {
+        const res = await fetch('/game/reset-monthly', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        document.getElementById('msg').textContent = res.ok ? 'Reset OK' : 'Error resetting';
+    });
+</script>
+</body>
+</html>

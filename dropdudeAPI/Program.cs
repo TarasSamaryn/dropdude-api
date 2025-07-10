@@ -1,16 +1,20 @@
 using System.Text;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using DropDudeAPI.Data;
 using DropDudeAPI.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// --- Слухаємо на порту 10000 
+// --- Слухаємо на порту 10000
 builder.WebHost.UseUrls("http://*:10000");
-
+ 
 // --- Logging ---
 builder.Logging.ClearProviders();
 builder.Logging.AddProvider(new MyInMemoryLoggerProvider());
@@ -18,12 +22,11 @@ builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 // --- Configuration ---
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? builder.Configuration["DATABASE_URL"];
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? builder.Configuration["DATABASE_URL"];
 
 if (string.IsNullOrEmpty(connectionString))
-{
     throw new InvalidOperationException("Connection string 'DefaultConnection' not configured.");
-}
 
 // --- PostgreSQL ---
 builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(connectionString));
@@ -37,11 +40,10 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "DropDude API V1", 
+        Title = "DropDude API V1",
         Version = "v1"
     });
 
-    // замінили ApiKey на Http-схему Bearer
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme",
@@ -52,12 +54,12 @@ builder.Services.AddSwaggerGen(c =>
         BearerFormat = "JWT"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement 
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme 
+            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference 
+                Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
@@ -79,17 +81,15 @@ builder.Services.AddCors(options =>
 
 // --- JWT Authentication ---
 string? jwtKey = builder.Configuration["Jwt:Key"];
-
 if (string.IsNullOrEmpty(jwtKey))
-{
     throw new InvalidOperationException("JWT Key not configured.");
-}
 
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
+})
+.AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
@@ -111,6 +111,17 @@ builder.Services.AddAuthorization(options =>
 
 WebApplication app = builder.Build();
 
+// --- Static files for UI at root ---
+// 1) "/" → login.html by default
+var wwwroot = app.Environment.WebRootPath ?? "wwwroot";
+app.UseDefaultFiles(new DefaultFilesOptions
+{
+    FileProvider     = new PhysicalFileProvider(wwwroot),
+    DefaultFileNames = new List<string> { "login.html" }
+});
+// 2) serve all static files from wwwroot
+app.UseStaticFiles();
+
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
@@ -120,7 +131,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "DropDude API V1");
-    c.RoutePrefix = ""; // відкривається на корені: http://localhost:10000/
+    c.RoutePrefix = ""; // Swagger UI at root: http://localhost:10000/
 });
 
 // 1) Ендпоінт для отримання логів у форматі JSON
@@ -130,50 +141,10 @@ app.MapGet("/logs", () =>
     return Results.Ok(logs);
 });
 
-// 2) Лог-вівер — віддає статичний HTML
-app.MapGet("/logview", async ctx =>
-{
-    string webRoot = app.Environment.WebRootPath ?? "wwwroot";
-    string file = Path.Combine(webRoot, "admin", "logview.html");
-    
-    if (!File.Exists(file))
-    {
-        ctx.Response.StatusCode = 404;
-        await ctx.Response.WriteAsync("Log viewer not found");
-        return;
-    }
-    
-    ctx.Response.ContentType = "text/html; charset=utf-8";
-    await ctx.Response.SendFileAsync(file);
-});
-
-app.MapGet("/leaderboard", async ctx =>
-{
-    string webRoot = app.Environment.WebRootPath ?? "wwwroot";
-    string file = Path.Combine(webRoot, "admin", "leaderboard.html");
-    
-    if (!File.Exists(file))
-    {
-        ctx.Response.StatusCode = 404;
-        await ctx.Response.WriteAsync("Leaderboard page not found");
-        return;
-    }
-    
-    ctx.Response.ContentType = "text/html; charset=utf-8";
-    await ctx.Response.SendFileAsync(file);
-});
-
-app.MapGet("/admin", async ctx =>
-{
-    string file = Path.Combine(app.Environment.WebRootPath, "admin", "index.html");
-    ctx.Response.ContentType = "text/html; charset=utf-8";
-    await ctx.Response.SendFileAsync(file);
-});
-
-// 4) Web API контролери
+// 2) Web API контролери
 app.MapControllers();
 
-// 5) Автоматичні міграції
+// 3) Автоматичні міграції
 using (IServiceScope scope = app.Services.CreateScope())
 {
     AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
