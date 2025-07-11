@@ -112,14 +112,12 @@ builder.Services.AddAuthorization(options =>
 WebApplication app = builder.Build();
 
 // --- Static files for UI at root ---
-// 1) "/" → login.html by default
 var wwwroot = app.Environment.WebRootPath ?? "wwwroot";
 app.UseDefaultFiles(new DefaultFilesOptions
 {
     FileProvider     = new PhysicalFileProvider(wwwroot),
     DefaultFileNames = new List<string> { "login.html" }
 });
-// 2) serve all static files from wwwroot
 app.UseStaticFiles();
 
 app.UseCors("AllowAll");
@@ -131,7 +129,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "DropDude API V1");
-    c.RoutePrefix = ""; // Swagger UI at root: http://localhost:10000/
+    c.RoutePrefix = "swagger"; // Swagger UI доступне за /swagger
 });
 
 // 1) Ендпоінт для отримання логів у форматі JSON

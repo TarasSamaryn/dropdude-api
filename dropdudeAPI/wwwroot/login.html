@@ -1,42 +1,145 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Login</title>
     <style>
-        body { background: #121212; color: #eee; font-family: sans-serif; padding: 2em; display: flex; justify-content: center; }
-        .card { max-width: 320px; width: 100%; background: #1e1e1e; padding: 1.5em; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        body {
+            background: #121212;
+            color: #eee;
+            font-family: sans-serif;
+            padding: 2em;
+            display: flex;
+            justify-content: center;
+        }
+        .card-wrapper {
+            position: relative;
+        }
+        .card {
+            max-width: 320px;
+            width: 100%;
+            background: #1e1e1e;
+            padding: 1.5em;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
         h3 { margin-bottom: 1em; text-align: center; font-size: 1.2em; }
-        input, button { width: 100%; margin: 0.5em 0; padding: 0.5em; border: none; border-radius: 4px; font-size: 1em; }
-        button { cursor: pointer; background: #3a3a3a; color: #fff; }
-        button:hover { background: #4e4e4e; }
-        #error { text-align: center; margin-top: 0.5em; font-size: 0.9em; color: #f55; }
+        input, button {
+            width: 100%;
+            margin: 0.5em 0;
+            padding: 0.5em;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        button {
+            cursor: pointer;
+            background: #3a3a3a;
+            color: #fff;
+        }
+        button:hover:not(:disabled) { background: #4e4e4e; }
+        button:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+        #error {
+            text-align: center;
+            margin-top: 0.5em;
+            font-size: 0.9em;
+            color: #f55;
+        }
+
+        /* overlay & spinner */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        .hidden { display: none; }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 4px solid #444;
+            border-top-color: #ddd;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <h3>Авторизація</h3>
-    <input id="username" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
-    <button id="loginBtn">Sign In</button>
-    <div id="error"></div>
+<div class="card-wrapper">
+    <div class="card">
+        <h3>Login</h3>
+        <input id="username" placeholder="Username">
+        <input id="password" type="password" placeholder="Password">
+        <button id="loginBtn">Sign In</button>
+        <div id="error"></div>
+    </div>
+    <div id="overlay" class="overlay hidden">
+        <div class="spinner"></div>
+    </div>
 </div>
+
 <script>
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
-        const res = await fetch('/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: user, password: pass })
-        });
-        if (!res.ok) {
-            document.getElementById('error').textContent = 'Login failed';
-            return;
+    const loginBtn = document.getElementById('loginBtn');
+    const overlay = document.getElementById('overlay');
+    const errorBox = document.getElementById('error');
+
+    loginBtn.addEventListener('click', async () => {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // show loading
+        loginBtn.disabled = true;
+        overlay.classList.remove('hidden');
+        errorBox.textContent = '';
+
+        try {
+            // 1) login
+            const loginRes = await fetch('/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            if (!loginRes.ok) {
+                errorBox.textContent = 'Login failed';
+                return;
+            }
+            const { token } = await loginRes.json();
+            localStorage.setItem('jwt', token);
+
+            // 2) check admin rights
+            const profileRes = await fetch('/profile', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (!profileRes.ok) {
+                errorBox.textContent = 'Error fetching profile';
+                localStorage.removeItem('jwt');
+                return;
+            }
+            const profile = await profileRes.json();
+            if (!profile.isAdmin) {
+                alert('You do not have administrator privileges');
+                localStorage.removeItem('jwt');
+                return;
+            }
+
+            // 3) redirect
+            window.location.href = 'admin.html';
+        } catch {
+            errorBox.textContent = 'Network error';
+        } finally {
+            // hide loading if not redirected
+            loginBtn.disabled = false;
+            overlay.classList.add('hidden');
         }
-        const { token } = await res.json();
-        localStorage.setItem('jwt', token);
-        window.location.href = 'admin.html';
     });
 </script>
 </body>
