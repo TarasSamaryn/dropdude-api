@@ -86,11 +86,17 @@ namespace DropDudeAPI.Controllers
                 .SelectMany(kv => Enumerable.Repeat(kv.Key, kv.Value))
                 .ToArray();
 
+            // ✅ Безпечне значення для lastSelectedSkin у відповіді (НЕ змінюємо БД)
+            string lastSelectedSafe =
+                !string.IsNullOrWhiteSpace(player.LastSelectedSkin)
+                    ? player.LastSelectedSkin
+                    : (bodiesSkins.Length > 0 ? bodiesSkins[0].ToString() : "0");
+
             var dto = new ProfileDto(
                 Id: player.Id,
                 IsAdmin: player.IsAdmin,
                 Username: player.Username,
-                LastSelectedSkin: player.LastSelectedSkin,
+                LastSelectedSkin: lastSelectedSafe,
                 BodiesSkins: bodiesSkins,
                 Rating: player.Rating,
                 MonthlyWins: player.MonthlyWins
