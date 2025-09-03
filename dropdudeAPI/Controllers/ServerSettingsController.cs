@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DropDudeAPI.Data;
 using DropDudeAPI.Models;
@@ -77,23 +78,43 @@ namespace DropDudeAPI.Controllers
             if (settings == null)
                 return NotFound(new { error = "Server settings not found" });
 
-            // Gameplay
-            settings.GameplayTimer = input.GameplayTimer;
-            settings.MaxPlayersForRandomRoom = input.MaxPlayersForRandomRoom;
-            settings.MaxPlayersForRankedRoom = input.MaxPlayersForRankedRoom;
+            // --- базова валідація / нормалізація числових полів ---
+            int validatedGameplayTimer         = ClampNonNegative(input.GameplayTimer);
+            int validatedMaxPlayersRandom      = ClampAtLeast(input.MaxPlayersForRandomRoom, 1);
+            int validatedMaxPlayersRanked      = ClampAtLeast(input.MaxPlayersForRankedRoom, 1);
+            int validatedFindRoomSeconds       = ClampNonNegative(input.FindRoomSeconds);
+            int validatedSkinsAmount           = ClampNonNegative(input.SkinsAmount);
 
-            // Server
-            settings.FindRoomSeconds = input.FindRoomSeconds;
+            // Спочатку зберігаємо валідні значення
+            settings.GameplayTimer             = validatedGameplayTimer;
+            settings.MaxPlayersForRandomRoom   = validatedMaxPlayersRandom;
+            settings.MaxPlayersForRankedRoom   = validatedMaxPlayersRanked;
+            settings.FindRoomSeconds           = validatedFindRoomSeconds;
+            settings.SkinsAmount               = validatedSkinsAmount;
 
-            // Skins
-            settings.SkinsAmount = input.SkinsAmount;
-            settings.FreeSkins = input.FreeSkins ?? Array.Empty<int>();
-            settings.MonthlySkins = input.MonthlySkins ?? Array.Empty<int>();
+            // --- чистимо масиви скінів ---
+            settings.FreeSkins     = SanitizeSkinArray(input.FreeSkins,     settings.SkinsAmount);
+            settings.MonthlySkins  = SanitizeSkinArray(input.MonthlySkins,  settings.SkinsAmount);
 
             await _db.SaveChangesAsync();
-            _logger.LogInformation("🔧 Server settings updated");
+            _logger.LogInformation("🔧 Server settings updated (validated)");
 
             return Ok(settings);
+        }
+
+        private static int ClampNonNegative(int v) => v < 0 ? 0 : v;
+        private static int ClampAtLeast(int v, int min) => v < min ? min : v;
+
+        private static int[] SanitizeSkinArray(int[]? arr, int skinsAmount)
+        {
+            if (arr == null) return Array.Empty<int>();
+
+            // лише 0..skinsAmount-1, без дублікатів, відсортовано
+            return arr
+                .Where(x => x >= 0 && x < skinsAmount)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToArray();
         }
 
         private static ServerGameSettings CreateDefaultServerSettings() => new ServerGameSettings

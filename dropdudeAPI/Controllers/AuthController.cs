@@ -30,44 +30,34 @@ namespace DropDudeAPI.Controllers
             _logger.LogInformation("Payload: {@Req}", request);
 
             if (string.IsNullOrWhiteSpace(request.Username))
-            {
                 return BadRequest("Username cannot be empty.");
-            }
 
             if (_db.Players.Any(p => p.Username == request.Username))
-            {
                 return BadRequest("User with this username already exists.");
-            }
 
-            // ✅ Беремо дефолтні безкоштовні скіни з ServerGameSettings (створюємо, якщо нема)
-            var serverSettings = _db.ServerGameSettings.FirstOrDefault();
-            if (serverSettings == null)
-            {
-                serverSettings = new ServerGameSettings
-                {
-                    FreeSkins = new[] { 0, 6, 7 }
-                };
-                _db.ServerGameSettings.Add(serverSettings);
-                _db.SaveChanges();
-            }
+            // ❗ Беремо безкоштовні скіни лише з ServerGameSettings (запис гарантовано існує)
+            var sgs = _db.ServerGameSettings.First();          // якщо запису нема — це помилка конфігурації БД
+            int[] freeSkins = sgs.FreeSkins;                   // очікується, що не null
 
-            var freeSkins = serverSettings.FreeSkins ?? Array.Empty<int>();
-            string freeSkinsRaw = string.Join(",", freeSkins);
+            string bodiesSkinsCsv = string.Join(",", freeSkins);
+            string lastSelected   = freeSkins.Length > 0 ? freeSkins[0].ToString() : "0";
 
-            Player player = new Player
+            var player = new Player
             {
                 Username         = request.Username,
                 PasswordHash     = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 CreatedAt        = DateTimeOffset.UtcNow,
                 IsAdmin          = false,
-                BodiesSkins      = freeSkinsRaw,
-                LastSelectedSkin = freeSkins.Length > 0 ? freeSkins[0].ToString() : "0"
+                BodiesSkins      = bodiesSkinsCsv,
+                LastSelectedSkin = lastSelected
             };
 
             _db.Players.Add(player);
             _db.SaveChanges();
 
-            _logger.LogInformation("✅ User {Username} registered successfully", player.Username);
+            _logger.LogInformation("✅ User {Username} registered successfully with free skins: {Skins}",
+                player.Username, bodiesSkinsCsv);
+
             return Ok("User registered successfully.");
         }
 
@@ -78,7 +68,7 @@ namespace DropDudeAPI.Controllers
 
             try
             {
-                Player? player = _db.Players.FirstOrDefault(p => p.Username == request.Username);
+                var player = _db.Players.FirstOrDefault(p => p.Username == request.Username);
                 if (player == null)
                 {
                     _logger.LogWarning("❌ Login failed – user not found: {Username}", request.Username);
@@ -92,8 +82,8 @@ namespace DropDudeAPI.Controllers
                 }
 
                 byte[] key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
-                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-                SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+                var tokenHandler   = new JwtSecurityTokenHandler();
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new[]
                     {
@@ -107,14 +97,11 @@ namespace DropDudeAPI.Controllers
                         SecurityAlgorithms.HmacSha256Signature)
                 };
 
-                SecurityToken? token = tokenHandler.CreateToken(tokenDescriptor);
-                string? jwt = tokenHandler.WriteToken(token);
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var jwt   = tokenHandler.WriteToken(token);
 
                 _logger.LogInformation("✅ User {Username} logged in, JWT issued", player.Username);
-                return Ok(new
-                {
-                    token = jwt
-                });
+                return Ok(new { token = jwt });
             }
             catch (Exception ex)
             {
