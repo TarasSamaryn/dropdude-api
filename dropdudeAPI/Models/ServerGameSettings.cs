@@ -10,7 +10,18 @@ namespace DropDudeAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        // Масив ID безкоштовних скінів (серверна правда)
+        // --- SERVER SETTINGS ---
+        // Gameplay
+        public int GameplayTimer { get; set; }
+        public int MaxPlayersForRandomRoom { get; set; }
+        public int MaxPlayersForRankedRoom { get; set; }
+
+        // Server
+        public int FindRoomSeconds { get; set; }
+
+        // Skins
+        public int SkinsAmount { get; set; }
         public int[] FreeSkins { get; set; } = Array.Empty<int>();
+        public int[] MonthlySkins { get; set; } = Array.Empty<int>();
     }
 }

@@ -3,6 +3,7 @@ using System;
 using DropDudeAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MinefieldServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250903124817_AddServerFieldsToServerGameSettings")]
+    partial class AddServerFieldsToServerGameSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,118 +24,6 @@ namespace MinefieldServer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("DropDudeAPI.Models.ClientGameSettings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("BatAttackSpeed")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("BatDamage")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("BatKickFlyAmount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("BatKickForce")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("BubbleBulletAmount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("BubbleBulletSpeed")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("CameraDistance")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("CameraXSpeed")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("CameraYSpeed")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("FistDamage")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("FistKickFlyAmount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("FistKickForce")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("FistsAttackSpeed")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("FocusSmoothSpeed")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("LaserBulletAmount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LaserBulletSpeed")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LaserDamage")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LaserKickFlyAmount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LaserKickForce")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("MouseSpeed")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("MouseSpeedMobile")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("PlayerGravity")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlayerJumpPower")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlayerSpeed")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RespawnDelayX")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RespawnDelayY")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RevolverBulletAmount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RevolverBulletSpeed")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RevolverDamage")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RevolverKickFlyAmount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RevolverKickForce")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("RotateSpeed")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("SkeletonTurnSpeed")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ClientGameSettings");
-                });
 
             modelBuilder.Entity("DropDudeAPI.Models.GameResult", b =>
                 {
