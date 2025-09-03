@@ -10,17 +10,23 @@ namespace DropDudeAPI.Data
         public DbSet<Player> Players => Set<Player>();
         public DbSet<GameResult> GameResults { get; set; } = null!;
         public DbSet<GameSettings> GameSettings { get; set; } = null!;
+        public DbSet<ServerGameSettings> ServerGameSettings { get; set; } = null!; // ✅ нова таблиця
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // PostgreSQL maps C# arrays to SQL arrays automatically,
-            // but we’ll explicitly set the column type for clarity:
+            // GameSettings: зберігаємо масиви як integer[]
             modelBuilder.Entity<GameSettings>(entity =>
             {
                 entity.Property(e => e.FreeSkins).HasColumnType("integer[]");
                 entity.Property(e => e.MonthlySkins).HasColumnType("integer[]");
+            });
+
+            // ServerGameSettings: також зберігаємо масив як integer[]
+            modelBuilder.Entity<ServerGameSettings>(entity =>
+            {
+                entity.Property(e => e.FreeSkins).HasColumnType("integer[]");
             });
         }
     }

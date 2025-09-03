@@ -39,15 +39,29 @@ namespace DropDudeAPI.Controllers
                 return BadRequest("User with this username already exists.");
             }
 
-            //added free skins for new player 
+            // ✅ Беремо дефолтні безкоштовні скіни з ServerGameSettings (створюємо, якщо нема)
+            var serverSettings = _db.ServerGameSettings.FirstOrDefault();
+            if (serverSettings == null)
+            {
+                serverSettings = new ServerGameSettings
+                {
+                    FreeSkins = new[] { 0, 6, 7 }
+                };
+                _db.ServerGameSettings.Add(serverSettings);
+                _db.SaveChanges();
+            }
+
+            var freeSkins = serverSettings.FreeSkins ?? Array.Empty<int>();
+            string freeSkinsRaw = string.Join(",", freeSkins);
+
             Player player = new Player
             {
-                Username        = request.Username,
-                PasswordHash    = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                CreatedAt       = DateTimeOffset.UtcNow,
-                IsAdmin         = false,
-                BodiesSkins     = "0,6,7",
-                LastSelectedSkin = "0"
+                Username         = request.Username,
+                PasswordHash     = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                CreatedAt        = DateTimeOffset.UtcNow,
+                IsAdmin          = false,
+                BodiesSkins      = freeSkinsRaw,
+                LastSelectedSkin = freeSkins.Length > 0 ? freeSkins[0].ToString() : "0"
             };
 
             _db.Players.Add(player);
@@ -56,7 +70,6 @@ namespace DropDudeAPI.Controllers
             _logger.LogInformation("✅ User {Username} registered successfully", player.Username);
             return Ok("User registered successfully.");
         }
-
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
@@ -88,7 +101,6 @@ namespace DropDudeAPI.Controllers
                         new Claim(ClaimTypes.Name, player.Username),
                         new Claim("isAdmin", player.IsAdmin.ToString())
                     }),
-                    
                     Expires = DateTime.UtcNow.AddHours(2),
                     SigningCredentials = new SigningCredentials(
                         new SymmetricSecurityKey(key),
@@ -106,9 +118,7 @@ namespace DropDudeAPI.Controllers
             }
             catch (Exception ex)
             {
-                // Логируем полное сообщение об ошибке и стек-трейс
                 _logger.LogError(ex, "❌ Exception during login for {Username}: {Message}", request.Username, ex.Message);
-                // Возвращаем 500 с сообщением
                 return StatusCode(500, $"Server error: {ex.Message}");
             }
         }

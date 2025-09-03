@@ -13,7 +13,7 @@
         label { display: block; margin: 0.5em 0; font-size: 0.9em; }
         input, textarea { width: 100%; padding: 0.5em; border: 1px solid #444; border-radius: 4px; background: #2a2a2a; color: #eee; }
         .hidden { display: none; }
-        #msg, #settingsMsg { text-align: center; margin-top: 0.5em; font-size: 0.9em; }
+        #msg, #settingsMsg, #serverSettingsMsg { text-align: center; margin-top: 0.5em; font-size: 0.9em; }
     </style>
 </head>
 <body>
@@ -23,13 +23,16 @@
         <button id="viewLeaderboard">View Leaderboard</button>
         <button id="viewLogs">View Logs</button>
         <button id="resetMonthly">Reset Monthly Wins</button>
-        <button id="manageSettings">Manage Game Settings</button>
+        <!-- renamed + new -->
+        <button id="manageClientSettings">Manage ClientGame Settings</button>
+        <button id="manageServerSettings">Manage ServerGame Settings</button>
         <div id="msg"></div>
     </div>
 
-    <div id="settingsSection" class="settings hidden">
-        <h3>Game Settings</h3>
-        <form id="settingsForm">
+    <!-- CLIENT (old settings) -->
+    <div id="clientSettingsSection" class="settings hidden">
+        <h3>Client Game Settings</h3>
+        <form id="clientSettingsForm">
             <!-- Gameplay -->
             <label>Gameplay Timer
                 <input type="number" name="gameplayTimer" />
@@ -162,8 +165,20 @@
                 <input type="number" step="0.01" name="rotateSpeed" />
             </label>
 
-            <button type="button" id="saveSettings">Save Settings</button>
+            <button type="button" id="saveClientSettings">Save Settings</button>
             <div id="settingsMsg"></div>
+        </form>
+    </div>
+
+    <!-- SERVER (new) -->
+    <div id="serverSettingsSection" class="settings hidden">
+        <h3>Server Game Settings</h3>
+        <form id="serverSettingsForm">
+            <label>Free Skins (csv)
+                <input type="text" name="freeSkins" />
+            </label>
+            <button type="button" id="saveServerSettings">Save Settings</button>
+            <div id="serverSettingsMsg"></div>
         </form>
     </div>
 </div>
@@ -182,18 +197,20 @@
         document.getElementById('msg').textContent = res.ok ? 'Reset OK' : 'Error resetting';
     };
 
-    const settingsSection = document.getElementById('settingsSection');
-    document.getElementById('manageSettings').onclick = async () => {
-        settingsSection.classList.toggle('hidden');
-        if (!settingsSection.classList.contains('hidden')) {
+    // --- CLIENT SETTINGS ---
+    const clientSettingsSection = document.getElementById('clientSettingsSection');
+    document.getElementById('manageClientSettings').onclick = async () => {
+        clientSettingsSection.classList.toggle('hidden');
+        if (!clientSettingsSection.classList.contains('hidden')) {
             const res = await fetch('/settings');
             if (!res.ok) {
                 document.getElementById('settingsMsg').textContent = 'Error loading settings';
                 return;
             }
             const s = await res.json();
-            const form = document.getElementById('settingsForm');
+            const form = document.getElementById('clientSettingsForm');
             Object.keys(s).forEach(key => {
+                if (!form[key]) { return; }
                 if (Array.isArray(s[key])) {
                     form[key].value = s[key].join(',');
                 } else {
@@ -204,8 +221,8 @@
         }
     };
 
-    document.getElementById('saveSettings').onclick = async () => {
-        const form = document.getElementById('settingsForm');
+    document.getElementById('saveClientSettings').onclick = async () => {
+        const form = document.getElementById('clientSettingsForm');
         const payload = {};
         Array.from(form.elements).forEach(el => {
             if (!el.name) return;
@@ -226,6 +243,41 @@
         document.getElementById('settingsMsg').textContent = res.ok
             ? 'Settings saved'
             : 'Error saving settings';
+    };
+
+    // --- SERVER SETTINGS ---
+    const serverSettingsSection = document.getElementById('serverSettingsSection');
+    document.getElementById('manageServerSettings').onclick = async () => {
+        serverSettingsSection.classList.toggle('hidden');
+        if (!serverSettingsSection.classList.contains('hidden')) {
+            const res = await fetch('/server-settings');
+            if (!res.ok) {
+                document.getElementById('serverSettingsMsg').textContent = 'Error loading server settings';
+                return;
+            }
+            const s = await res.json();
+            const form = document.getElementById('serverSettingsForm');
+            form.freeSkins.value = (s.freeSkins || []).join(',');
+            document.getElementById('serverSettingsMsg').textContent = '';
+        }
+    };
+
+    document.getElementById('saveServerSettings').onclick = async () => {
+        const form = document.getElementById('serverSettingsForm');
+        const payload = {
+            freeSkins: form.freeSkins.value.split(',').map(x => Number(x))
+        };
+        const res = await fetch('/server-settings', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(payload)
+        });
+        document.getElementById('serverSettingsMsg').textContent = res.ok
+            ? 'Server settings saved'
+            : 'Error saving server settings';
     };
 </script>
 </body>
