@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using DropDudeAPI.Data;
 using DropDudeAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DropDudeAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("game")]
     public class GameController : ControllerBase
     {
         private readonly AppDbContext _db;
@@ -15,100 +16,175 @@ namespace DropDudeAPI.Controllers
 
         public GameController(AppDbContext db, ILogger<GameController> logger)
         {
-            _db     = db;
+            _db = db;
             _logger = logger;
         }
 
+        // ==== DTOs ====
         public class RecordResultDto
         {
-            public int WinnerId { get; set; }
             public int Damage { get; set; }
+            public bool IsWinner { get; set; }
         }
 
-        [HttpPost("finish")]
-        [Authorize]
-        public async Task<IActionResult> Finish([FromBody] RecordResultDto dto)
+        public class LeaderboardItemDto
         {
-            _logger.LogInformation("🔔 Finish hit: {@Dto}", dto);
-            
+            public int PlayerId { get; set; }
+            public string Username { get; set; } = string.Empty;
+            public int Wins { get; set; }
+        }
+
+        // ==== NEW: кожен гравець шле свій результат ====
+        [HttpPost("result")]
+        [Authorize]
+        public async Task<IActionResult> PostResult([FromBody] RecordResultDto dto)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            _logger.LogInformation("🔔 Result by user {UserId}: Damage={Damage}, IsWinner={IsWinner}", userId, dto.Damage, dto.IsWinner);
+
+            // 1) Записуємо результат гравця
             GameResult result = new GameResult
             {
-                PlayerId   = dto.WinnerId,
+                PlayerId = userId,
                 OccurredAt = DateTimeOffset.UtcNow,
-                Damage     = dto.Damage
+                Damage = dto.Damage
             };
-            
             _db.GameResults.Add(result);
-            await _db.SaveChangesAsync();
-            
-            Player? player = await _db.Players.FindAsync(dto.WinnerId);
-            
+
+            // 2) Якщо переможець — інкрементуємо лічильник
+            Player? player = await _db.Players.FindAsync(userId);
             if (player == null)
             {
-                _logger.LogWarning("⚠️ Player not found: {Id}", dto.WinnerId);
+                _logger.LogWarning("⚠️ Player not found: {Id}", userId);
                 return BadRequest("Player not found");
             }
-            
-            player.MonthlyWins++;
-            
+            if (dto.IsWinner)
+            {
+                player.MonthlyWins++;
+            }
+
+            // 3) Перерахунок рейтингу по останніх 20 своїх результатах
             List<GameResult> last20 = await _db.GameResults
-                .Where(r => r.PlayerId == dto.WinnerId)
+                .Where(r => r.PlayerId == userId)
                 .OrderByDescending(r => r.OccurredAt)
                 .Take(20)
                 .ToListAsync();
-            
+
             player.Rating = last20.Any() ? last20.Average(r => r.Damage) : 0;
-            
+
             await _db.SaveChangesAsync();
 
-            _logger.LogInformation(
-                "✅ Recorded win, updated MonthlyWins and Rating for PlayerId {Id}: Wins={Wins}, Rating={Rating}",
-                dto.WinnerId, player.MonthlyWins, player.Rating
-            );
+            _logger.LogInformation("✅ Saved result. Player {Id}: Wins={Wins}, Rating={Rating}", userId, player.MonthlyWins, player.Rating);
 
             return Ok(new
             {
-                message   = "Winner is fixed",
-                newRating = player.Rating
+                message = "Result recorded",
+                newRating = player.Rating,
+                monthlyWins = player.MonthlyWins
             });
         }
 
+        // ==== BACKWARD-COMPAT (старий варіант для переможця). РЕКОМЕНДУЮ НЕ ВИКОРИСТОВУВАТИ ====
+        [HttpPost("finish")]
+        [Authorize]
+        public async Task<IActionResult> Finish([FromBody] LegacyFinishDto dto)
+        {
+            // Тепер ігноруємо WinnerId з клієнта. Беремо з токена.
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            _logger.LogInformation("🔔 Legacy Finish by user {UserId}. Damage={Damage}", userId, dto.Damage);
+
+            GameResult result = new GameResult
+            {
+                PlayerId = userId,
+                OccurredAt = DateTimeOffset.UtcNow,
+                Damage = dto.Damage
+            };
+            _db.GameResults.Add(result);
+
+            Player? player = await _db.Players.FindAsync(userId);
+            if (player == null)
+            {
+                _logger.LogWarning("⚠️ Player not found: {Id}", userId);
+                return BadRequest("Player not found");
+            }
+
+            player.MonthlyWins++;
+
+            List<GameResult> last20 = await _db.GameResults
+                .Where(r => r.PlayerId == userId)
+                .OrderByDescending(r => r.OccurredAt)
+                .Take(20)
+                .ToListAsync();
+
+            player.Rating = last20.Any() ? last20.Average(r => r.Damage) : 0;
+
+            await _db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Winner recorded (legacy)",
+                newRating = player.Rating,
+                monthlyWins = player.MonthlyWins
+            });
+        }
+
+        public class LegacyFinishDto
+        {
+            public int Damage { get; set; }
+            // WinnerId залишаю для сумісності з клієнтом, але ігнорується:
+            public int WinnerId { get; set; }
+        }
+
+        // ==== Лідер місяця (TOP-1 за Players.MonthlyWins) ====
         [HttpGet("leaderboard")]
         [Authorize]
         public async Task<IActionResult> GetLeaderboard()
         {
-            _logger.LogInformation("🔔 Leaderboard hit");
+            _logger.LogInformation("🔔 Leaderboard hit (by MonthlyWins)");
 
-            DateTimeOffset monthStart = new DateTimeOffset(
-                DateTime.UtcNow.Year,
-                DateTime.UtcNow.Month,
-                1, 0, 0, 0,
-                TimeSpan.Zero
-            );
-
-            var top = await _db.GameResults
-                .Where(r => r.OccurredAt >= monthStart)
-                .GroupBy(r => r.PlayerId)
-                .Select(g => new { PlayerId = g.Key, Wins = g.Count() })
-                .OrderByDescending(x => x.Wins)
+            var top = await _db.Players
+                .OrderByDescending(p => p.MonthlyWins)
+                .Select(p => new LeaderboardItemDto
+                {
+                    PlayerId = p.Id,
+                    Username = p.Username,
+                    Wins = p.MonthlyWins
+                })
                 .FirstOrDefaultAsync();
 
             if (top == null)
             {
-                _logger.LogWarning("⚠️ No monthly results");
-                return NotFound("No results for the month");
+                _logger.LogWarning("⚠️ No players");
+                return NotFound("No players");
             }
 
             _logger.LogInformation("✅ Leaderboard: PlayerId {Id} → {Wins} wins", top.PlayerId, top.Wins);
-            
             return Ok(top);
         }
 
+        // Повний список за перемогами в поточному періоді (MonthlyWins)
+        [HttpGet("leaderboard/all")]
+        [Authorize]
+        public async Task<IActionResult> GetFullLeaderboard()
+        {
+            var list = await _db.Players
+                .OrderByDescending(p => p.MonthlyWins)
+                .Select(p => new LeaderboardItemDto
+                {
+                    PlayerId = p.Id,
+                    Username = p.Username,
+                    Wins = p.MonthlyWins
+                })
+                .ToListAsync();
+
+            return Ok(list);
+        }
+
+        // Чемпіон місяця (для сумісності зі старим клієнтом)
         [HttpGet("champion")]
         public async Task<IActionResult> GetMonthlyChampion()
         {
             _logger.LogInformation("🔔 Champion hit");
-
             Player? champ = await _db.Players.OrderByDescending(p => p.MonthlyWins).FirstOrDefaultAsync();
 
             if (champ == null)
@@ -125,6 +201,7 @@ namespace DropDudeAPI.Controllers
             });
         }
 
+        // Скидання лічильника перемог (адмін)
         [HttpPost("reset-monthly")]
         [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> ResetMonthlyWins()
@@ -138,47 +215,9 @@ namespace DropDudeAPI.Controllers
             }
 
             await _db.SaveChangesAsync();
-
             _logger.LogInformation("✅ MonthlyWins reset for all players");
+
             return Ok("Counters reset");
-        }
-
-        [HttpGet("leaderboard/all")]
-        [Authorize]
-        public async Task<IActionResult> GetFullLeaderboard()
-        {
-            DateTimeOffset monthStart = new DateTimeOffset(
-                DateTime.UtcNow.Year,
-                DateTime.UtcNow.Month,
-                1, 0, 0, 0,
-                TimeSpan.Zero
-            );
-
-            var list = await _db.GameResults
-                .Where(r => r.OccurredAt >= monthStart)
-                .GroupBy(r => r.PlayerId)
-                .Select(g => new { PlayerId = g.Key, Wins = g.Count() })
-                .OrderByDescending(x => x.Wins)
-                .Join(_db.Players,
-                      g => g.PlayerId,
-                      p => p.Id,
-                      (g, p) => new { p.Username, g.Wins })
-                .ToListAsync();
-
-            return Ok(list);
-        }
-        
-        [HttpGet("rating-leaderboard")]
-        [Authorize]
-        public async Task<IActionResult> GetRatingLeaderboard()
-        {
-            _logger.LogInformation("🔔 Rating leaderboard hit");
-            var list = await _db.Players
-                .OrderByDescending(p => p.Rating)
-                .Select(p => new { p.Username, p.Rating })
-                .ToListAsync();
-            
-            return Ok(list);
         }
     }
 }
