@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DropDudeAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bc29e405746c6381e95fc3882d2512019bd61e1d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0bd9cbf7628fa76532555e7c32aec3220db0bee")]
 [assembly: System.Reflection.AssemblyProductAttribute("DropDudeAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DropDudeAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
