@@ -1,41 +1,61 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Server Logs</title>
     <style>
-        body { font-family: monospace; background: #1e1e1e; color: #dcdcdc; padding: 1em; }
+        body { font-family: monospace; background: #1e1e1e; color: #dcdcdc; padding: 1em; display: flex; justify-content: center; }
+        .container { max-width: 900px; width: 100%; }
+        .back-btn { background: #555; color: #fff; border: none; border-radius: 4px; padding: 0.5em 1em; cursor: pointer; margin-bottom: 1em; }
+        .back-btn:hover { background: #777; }
+        h2 { margin: 0.2em 0 0.8em; text-align: center; }
+        .log { background: #000; padding: 1em; border-radius: 6px; max-height: 70vh; overflow-y: auto; font-size: 0.9em; }
+        .line { margin-bottom: 4px; white-space: pre-wrap; }
         .info { color: #4fc3f7; }
         .warn { color: #ffb74d; }
         .error { color: #ef5350; }
-        .log-line { margin-bottom: 4px; white-space: pre-wrap; }
-        .back-btn { background: #555; color: #fff; border: none; border-radius: 4px; padding: 0.5em 1em; cursor: pointer; margin-bottom: 1em; }
-        .back-btn:hover { background: #777; }
+        #error { text-align: center; margin-top: 0.5em; color: #f55; }
     </style>
 </head>
 <body>
-<button class="back-btn" onclick="window.history.back()">← Back</button>
-<h2>🧠 Server Logs</h2>
-<div id="log-container">Loading...</div>
+<div class="container">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <h2>🧠 Server Logs</h2>
+    <div id="log" class="log">Loading...</div>
+    <div id="error"></div>
+</div>
 <script>
-    let lastLength = 0;
+    const token = localStorage.getItem('jwt');
+    if (!token) window.location.href = 'login.html';
+
+    let lastLen = 0;
+
     async function loadLogs() {
-        const res = await fetch('/logs', { cache: 'no-store' });
-        const logs = await res.json();
-        const container = document.getElementById('log-container');
-        if (lastLength === 0) container.innerHTML = '';
-        for (let i = lastLength; i < logs.length; i++) {
-            const lineEl = document.createElement('div');
-            lineEl.classList.add('log-line');
-            const text = logs[i];
-            if (text.includes('[Error]')) lineEl.classList.add('error');
-            else if (text.includes('[Warning]')) lineEl.classList.add('warn');
-            else lineEl.classList.add('info');
-            lineEl.textContent = text;
-            container.appendChild(lineEl);
+        const res = await fetch('/logs', { headers: { 'Authorization': 'Bearer ' + token }, cache: 'no-store' });
+        if (!res.ok) {
+            document.getElementById('error').textContent = `Error loading logs (${res.status})`;
+            return;
         }
-        lastLength = logs.length;
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+            document.getElementById('log').textContent = 'Unexpected response';
+            return;
+        }
+        const container = document.getElementById('log');
+        if (lastLen === 0) container.innerHTML = '';
+        for (let i = lastLen; i < data.length; i++) {
+            const el = document.createElement('div');
+            el.className = 'line';
+            const text = data[i];
+            if (text.includes('[Error]')) el.classList.add('error');
+            else if (text.includes('[Warning]')) el.classList.add('warn');
+            else el.classList.add('info');
+            el.textContent = text;
+            container.appendChild(el);
+        }
+        lastLen = data.length;
     }
+
     loadLogs();
     setInterval(loadLogs, 1000);
 </script>

@@ -1,58 +1,20 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Leaderboard</title>
     <style>
-        body {
-            background: #121212;
-            color: #f0f0f0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            padding: 2em;
-        }
-        .card {
-            background: #1e1e1e;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            padding: 1.5em;
-            max-width: 600px;
-            width: 100%;
-        }
-        h2 {
-            font-size: 1.8em;
-            margin: 0.2em 0 0.8em;
-            text-align: center;
-            color: #ffd700;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 1em;
-        }
-        th, td {
-            padding: 0.75em 0.5em;
-            text-align: left;
-        }
-        th {
-            border-bottom: 2px solid #444;
-            font-weight: bold;
-        }
+        body { background: #121212; color: #f0f0f0; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 2em; }
+        .card { background: #1e1e1e; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); padding: 1.5em; max-width: 600px; width: 100%; }
+        h2 { font-size: 1.8em; margin: 0.2em 0 0.8em; text-align: center; color: #ffd700; }
+        table { width: 100%; border-collapse: collapse; font-size: 1em; }
+        th, td { padding: 0.75em 0.5em; text-align: left; }
+        th { border-bottom: 2px solid #444; font-weight: bold; }
         tr:nth-child(odd) { background: #2a2a2a; }
         tr:hover { background: #333; }
         .admin { color: #4fc3f7; font-weight: bold; }
         #error { text-align: center; margin-top: 0.5em; color: #f55; }
-        .back-btn {
-            background: #3a3a3a;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 0.5em 1em;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-bottom: 1em;
-        }
+        .back-btn { background: #3a3a3a; color: #fff; border: none; border-radius: 4px; padding: 0.5em 1em; cursor: pointer; font-size: 0.9em; margin-bottom: 1em; }
         .back-btn:hover { background: #555; }
     </style>
 </head>
@@ -75,9 +37,7 @@
     if (!token) window.location.href = 'login.html';
 
     async function loadLeaderboard() {
-        const res = await fetch('/game/leaderboard/all', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
+        const res = await fetch('/game/leaderboard/all', { headers: { 'Authorization': 'Bearer ' + token } });
         if (!res.ok) {
             document.getElementById('error').textContent = `Error loading (${res.status})`;
             return;
@@ -95,7 +55,7 @@
             }
             row.innerHTML = `<td>${i+1}</td>`;
             row.appendChild(playerCell);
-            row.innerHTML += `<td>${item.wins}</td><td>${item.rating.toFixed(1)}</td>`;
+            row.innerHTML += `<td>${item.wins}</td><td>${Number(item.rating).toFixed(1)}</td>`;
             body.appendChild(row);
         });
     }

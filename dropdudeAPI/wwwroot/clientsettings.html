@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Client Settings</title>
@@ -29,7 +29,7 @@
     if (!token) window.location.href = 'login.html';
 
     async function loadSettings() {
-        const res = await fetch('/settings');
+        const res = await fetch('/settings', { headers: { 'Authorization': 'Bearer ' + token } });
         if (!res.ok) {
             document.getElementById('settingsMsg').textContent = 'Error loading settings';
             return;
@@ -37,6 +37,7 @@
         const s = await res.json();
         const form = document.getElementById('clientSettingsForm');
         form.innerHTML = '';
+        // Генерація інпутів із JSON
         for (const key in s) {
             const label = document.createElement('label');
             label.innerHTML = `${key}: <input name="${key}" value="${s[key]}">`;
@@ -55,7 +56,7 @@
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
             body: JSON.stringify(payload)
         });
-        document.getElementById('settingsMsg').textContent = res.ok ? 'Saved ✅' : 'Error saving';
+        document.getElementById('settingsMsg').textContent = res.ok ? 'Settings saved ✅' : 'Error saving settings ❌';
     };
 
     loadSettings();

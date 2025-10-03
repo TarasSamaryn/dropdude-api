@@ -1,45 +1,17 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Admin Panel</title>
     <style>
-        body {
-            background: #121212;
-            color: #eee;
-            font-family: sans-serif;
-            padding: 2em;
-            display: flex;
-            justify-content: center;
-        }
-        .card {
-            max-width: 680px;
-            width: 100%;
-            background: #1e1e1e;
-            padding: 1.5em;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
+        body { background: #121212; color: #eee; font-family: sans-serif; padding: 2em; display: flex; justify-content: center; }
+        .card { max-width: 680px; width: 100%; background: #1e1e1e; padding: 1.5em; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         h3 { margin-top: 0; text-align: center; }
         .buttons { margin: 1em 0; }
-        .btn {
-            width: 100%;
-            margin: 0.5em 0;
-            padding: 0.75em;
-            border: none;
-            border-radius: 4px;
-            font-size: 1em;
-            cursor: pointer;
-            background: #3a3a3a;
-            color: #fff;
-        }
+        .btn { width: 100%; margin: 0.5em 0; padding: 0.75em; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; background: #3a3a3a; color: #fff; }
         .btn:hover { background: #4e4e4e; }
-        .danger {
-            background: #b71c1c;
-        }
-        .danger:hover {
-            background: #d32f2f;
-        }
+        .danger { background: #b71c1c; }
+        .danger:hover { background: #d32f2f; }
         .spacer { height: 12px; }
         #msg { text-align: center; margin-top: 0.5em; font-size: 0.9em; }
         .footer { margin-top: 1.2em; }
@@ -52,12 +24,12 @@
     <div class="buttons">
         <button class="btn" id="viewLeaderboard">View Leaderboard</button>
         <button class="btn" id="viewLogs">View Logs</button>
-        <button class="btn" id="manageClientSettings">Manage ClientGame Settings</button>
-        <button class="btn" id="manageServerSettings">Manage ServerGame Settings</button>
+        <button class="btn" id="manageClientSettings">Manage Client Settings</button>
+        <button class="btn" id="manageServerSettings">Manage Server Settings</button>
 
         <div class="footer">
             <div class="spacer"></div>
-            <button class="btn danger" id="resetMonthly">Reset Monthly Wins</button>
+            <button class="btn danger" id="resetMonthly">⚠️ Reset Monthly Wins</button>
             <div id="msg"></div>
         </div>
     </div>
@@ -67,22 +39,23 @@
     const token = localStorage.getItem('jwt');
     if (!token) window.location.href = 'login.html';
 
-    // Переходи в ТОму ж вікні (щоб працювала кнопка "Назад")
+    // Переходи в ТОМУ ж вікні
     document.getElementById('viewLeaderboard').onclick = () => location.href = 'leaderboard.html';
     document.getElementById('viewLogs').onclick = () => location.href = 'logview.html';
     document.getElementById('manageClientSettings').onclick = () => location.href = 'clientsettings.html';
     document.getElementById('manageServerSettings').onclick = () => location.href = 'serversettings.html';
 
-    // Підтвердження для скидання місячних перемог
+    // Підтвердження скидання
     document.getElementById('resetMonthly').onclick = async () => {
-        const ok = confirm('⚠️ Увага!\nЦя дія скине лічильник перемог за місяць для УСІХ гравців.\nПродовжити?');
-        if (!ok) return;
+        if (!confirm("⚠️ Are you sure you want to reset ALL monthly wins for every player? This action cannot be undone.")) return;
 
         const res = await fetch('/game/reset-monthly', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token }
         });
-        document.getElementById('msg').textContent = res.ok ? 'Reset OK' : 'Error resetting';
+        document.getElementById('msg').textContent = res.ok
+            ? 'Monthly wins reset successfully ✅'
+            : 'Error resetting monthly wins ❌';
     };
 </script>
 </body>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Server Settings</title>
@@ -29,15 +29,17 @@
     if (!token) window.location.href = 'login.html';
 
     async function loadSettings() {
-        const res = await fetch('/server-settings');
+        const res = await fetch('/server-settings', { headers: { 'Authorization': 'Bearer ' + token } });
         if (!res.ok) {
-            document.getElementById('serverSettingsMsg').textContent = 'Error loading';
+            document.getElementById('serverSettingsMsg').textContent = 'Error loading server settings';
             return;
         }
         const s = await res.json();
         const form = document.getElementById('serverSettingsForm');
         form.innerHTML = '';
+        // skip службові поля
         for (const key in s) {
+            if (key.toLowerCase() === 'id') continue;
             const val = Array.isArray(s[key]) ? s[key].join(',') : s[key];
             const label = document.createElement('label');
             label.innerHTML = `${key}: <input name="${key}" value="${val}">`;
@@ -61,7 +63,7 @@
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
             body: JSON.stringify(payload)
         });
-        document.getElementById('serverSettingsMsg').textContent = res.ok ? 'Saved ✅' : 'Error saving';
+        document.getElementById('serverSettingsMsg').textContent = res.ok ? 'Server settings saved ✅' : 'Error saving server settings ❌';
     };
 
     loadSettings();
