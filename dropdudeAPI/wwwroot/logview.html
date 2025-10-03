@@ -2,39 +2,45 @@
 <html lang="uk">
 <head>
     <meta charset="utf-8">
-    <title>Server Logs</title>
+    <title>Logs</title>
     <style>
-        body { font-family: monospace; background: #1e1e1e; color: #dcdcdc; padding: 1em; }
-        .info { color: #4fc3f7; }
-        .warn { color: #ffb74d; }
-        .error { color: #ef5350; }
-        .log-line { margin-bottom: 4px; white-space: pre-wrap; }
+        body { background: #121212; color: #eee; font-family: monospace; padding: 1em; }
+        .card { max-width: 900px; margin: auto; background: #1e1e1e; padding: 1em;
+            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        h3 { margin-top: 0; text-align: center; }
+        #logs { white-space: pre-wrap; background: #000; padding: 1em; border-radius: 4px;
+            max-height: 600px; overflow-y: auto; font-size: 0.9em; }
+        #error { text-align: center; margin-top: 0.5em; color: #f55; }
     </style>
 </head>
 <body>
-<h2>🧠 Server Logs</h2>
-<div id="log-container">Loading...</div>
+<div class="card">
+    <h3>Server Logs</h3>
+    <div id="logs">Loading...</div>
+    <div id="error"></div>
+</div>
+
 <script>
-    let lastLength = 0;
+    const token = localStorage.getItem('jwt');
+    if (!token) window.location.href = 'login.html';
+
     async function loadLogs() {
-        const res = await fetch('/logs', { cache: 'no-store' });
-        const logs = await res.json();
-        const container = document.getElementById('log-container');
-        if (lastLength === 0) container.innerHTML = '';
-        for (let i = lastLength; i < logs.length; i++) {
-            const lineEl = document.createElement('div');
-            lineEl.classList.add('log-line');
-            const text = logs[i];
-            if (text.includes('[Error]')) lineEl.classList.add('error');
-            else if (text.includes('[Warning]')) lineEl.classList.add('warn');
-            else lineEl.classList.add('info');
-            lineEl.textContent = text;
-            container.appendChild(lineEl);
+        const res = await fetch('/logs', { headers: { 'Authorization': 'Bearer ' + token } });
+        const logsDiv = document.getElementById('logs');
+        if (!res.ok) {
+            document.getElementById('error').textContent = `Error loading logs (${res.status})`;
+            return;
         }
-        lastLength = logs.length;
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+            logsDiv.textContent = 'Unexpected response';
+            return;
+        }
+        logsDiv.textContent = data.join("\n");
     }
+
     loadLogs();
-    setInterval(loadLogs, 1000);
+    setInterval(loadLogs, 5000);
 </script>
 </body>
 </html>

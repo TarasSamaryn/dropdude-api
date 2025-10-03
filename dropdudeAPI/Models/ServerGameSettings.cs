@@ -23,5 +23,9 @@ namespace DropDudeAPI.Models
         public int SkinsAmount { get; set; }
         public int[] FreeSkins { get; set; } = Array.Empty<int>();
         public int[] MonthlySkins { get; set; } = Array.Empty<int>();
+
+        // --- Bots difficulty thresholds ---
+        public int MediumRatingMin { get; set; }   // NEW
+        public int MediumRatingMax { get; set; }   // NEW
     }
 }

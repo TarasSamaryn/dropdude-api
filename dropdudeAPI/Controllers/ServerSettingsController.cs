@@ -38,32 +38,14 @@ namespace DropDudeAPI.Controllers
                 return Ok(settings);
             }
 
-            // one-time backfill: якщо старий запис порожній після міграції — заповнюємо дефолтами
-            bool isEmpty =
-                settings.GameplayTimer == 0 &&
-                settings.MaxPlayersForRandomRoom == 0 &&
-                settings.MaxPlayersForRankedRoom == 0 &&
-                settings.FindRoomSeconds == 0 &&
-                settings.SkinsAmount == 0 &&
-                (settings.FreeSkins == null || settings.FreeSkins.Length == 0) &&
-                (settings.MonthlySkins == null || settings.MonthlySkins.Length == 0);
-
-            if (isEmpty)
+            // backfill якщо нові поля порожні
+            if (settings.MediumRatingMin == 0 && settings.MediumRatingMax == 0)
             {
-                var defaults = CreateDefaultServerSettings();
-
-                settings.GameplayTimer = defaults.GameplayTimer;
-                settings.MaxPlayersForRandomRoom = defaults.MaxPlayersForRandomRoom;
-                settings.MaxPlayersForRankedRoom = defaults.MaxPlayersForRankedRoom;
-
-                settings.FindRoomSeconds = defaults.FindRoomSeconds;
-
-                settings.SkinsAmount = defaults.SkinsAmount;
-                settings.FreeSkins = defaults.FreeSkins;
-                settings.MonthlySkins = defaults.MonthlySkins;
-
+                var d = CreateDefaultServerSettings();
+                settings.MediumRatingMin = d.MediumRatingMin;
+                settings.MediumRatingMax = d.MediumRatingMax;
                 await _db.SaveChangesAsync();
-                _logger.LogInformation("🛠 Backfilled ServerGameSettings with defaults");
+                _logger.LogInformation("🛠 Backfilled ServerGameSettings with bot difficulty defaults");
             }
 
             return Ok(settings);
@@ -78,28 +60,44 @@ namespace DropDudeAPI.Controllers
             if (settings == null)
                 return NotFound(new { error = "Server settings not found" });
 
-            // --- базова валідація / нормалізація числових полів ---
-            int validatedGameplayTimer         = ClampNonNegative(input.GameplayTimer);
-            int validatedMaxPlayersRandom      = ClampAtLeast(input.MaxPlayersForRandomRoom, 1);
-            int validatedMaxPlayersRanked      = ClampAtLeast(input.MaxPlayersForRankedRoom, 1);
-            int validatedFindRoomSeconds       = ClampNonNegative(input.FindRoomSeconds);
-            int validatedSkinsAmount           = ClampNonNegative(input.SkinsAmount);
+            int validatedGameplayTimer   = ClampNonNegative(input.GameplayTimer);
+            int validatedMaxPlayersRandom = ClampAtLeast(input.MaxPlayersForRandomRoom, 1);
+            int validatedMaxPlayersRanked = ClampAtLeast(input.MaxPlayersForRankedRoom, 1);
+            int validatedFindRoomSeconds = ClampNonNegative(input.FindRoomSeconds);
+            int validatedSkinsAmount     = ClampNonNegative(input.SkinsAmount);
 
-            // Спочатку зберігаємо валідні значення
-            settings.GameplayTimer             = validatedGameplayTimer;
-            settings.MaxPlayersForRandomRoom   = validatedMaxPlayersRandom;
-            settings.MaxPlayersForRankedRoom   = validatedMaxPlayersRanked;
-            settings.FindRoomSeconds           = validatedFindRoomSeconds;
-            settings.SkinsAmount               = validatedSkinsAmount;
+            // нові поля
+            if (input.MediumRatingMax < input.MediumRatingMin)
+                return BadRequest("MediumRatingMax must be >= MediumRatingMin.");
 
-            // --- чистимо масиви скінів ---
-            settings.FreeSkins     = SanitizeSkinArray(input.FreeSkins,     settings.SkinsAmount);
-            settings.MonthlySkins  = SanitizeSkinArray(input.MonthlySkins,  settings.SkinsAmount);
+            settings.GameplayTimer = validatedGameplayTimer;
+            settings.MaxPlayersForRandomRoom = validatedMaxPlayersRandom;
+            settings.MaxPlayersForRankedRoom = validatedMaxPlayersRanked;
+            settings.FindRoomSeconds = validatedFindRoomSeconds;
+            settings.SkinsAmount = validatedSkinsAmount;
+
+            settings.FreeSkins = SanitizeSkinArray(input.FreeSkins, settings.SkinsAmount);
+            settings.MonthlySkins = SanitizeSkinArray(input.MonthlySkins, settings.SkinsAmount);
+
+            settings.MediumRatingMin = input.MediumRatingMin; // NEW
+            settings.MediumRatingMax = input.MediumRatingMax; // NEW
 
             await _db.SaveChangesAsync();
             _logger.LogInformation("🔧 Server settings updated (validated)");
 
             return Ok(settings);
+        }
+
+        // NEW endpoint: визначення рівня бота
+        [HttpGet("bots/difficulty")]
+        public async Task<IActionResult> GetBotDifficulty([FromQuery] double rating)
+        {
+            var s = await _db.ServerGameSettings.FirstOrDefaultAsync() ?? CreateDefaultServerSettings();
+            string diff = rating < s.MediumRatingMin ? "Easy"
+                        : rating > s.MediumRatingMax ? "Hard"
+                        : "Medium";
+
+            return Ok(new { rating, difficulty = diff });
         }
 
         private static int ClampNonNegative(int v) => v < 0 ? 0 : v;
@@ -109,7 +107,6 @@ namespace DropDudeAPI.Controllers
         {
             if (arr == null) return Array.Empty<int>();
 
-            // лише 0..skinsAmount-1, без дублікатів, відсортовано
             return arr
                 .Where(x => x >= 0 && x < skinsAmount)
                 .Distinct()
@@ -119,18 +116,16 @@ namespace DropDudeAPI.Controllers
 
         private static ServerGameSettings CreateDefaultServerSettings() => new ServerGameSettings
         {
-            // Gameplay
             GameplayTimer = 300,
             MaxPlayersForRandomRoom = 6,
             MaxPlayersForRankedRoom = 6,
-
-            // Server
             FindRoomSeconds = 30,
-
-            // Skins
             SkinsAmount = 41,
             FreeSkins = new[] { 0, 6, 7 },
-            MonthlySkins = new[] { 1, 2, 8 }
+            MonthlySkins = new[] { 1, 2, 8 },
+
+            MediumRatingMin = 800,   // NEW
+            MediumRatingMax = 1200   // NEW
         };
     }
 }

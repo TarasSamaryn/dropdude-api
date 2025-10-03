@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <title>Client Settings</title>
+    <style>
+        body { background: #121212; color: #eee; font-family: sans-serif; padding: 2em; }
+        .card { max-width: 680px; margin: auto; background: #1e1e1e; padding: 1.5em;
+            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        h3 { margin-top: 0; text-align: center; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+        label { display: block; margin: 0.5em 0; font-size: 0.9em; }
+        input { width: 100%; padding: 0.5em; border: 1px solid #444; border-radius: 4px;
+            background: #2a2a2a; color: #eee; }
+        button { width: 100%; margin-top: 1em; padding: 0.75em; border: none; border-radius: 4px;
+            font-size: 1em; cursor: pointer; background: #3a3a3a; color: #fff; }
+        button:hover { background: #4e4e4e; }
+        #settingsMsg { text-align: center; margin-top: 0.5em; font-size: 0.9em; }
+        .section-title { margin: 1.2em 0 0.6em; font-weight: bold; opacity: .9; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h3>Client Game Settings</h3>
+    <form id="clientSettingsForm">
+        <div class="section-title">Kick forces</div>
+        <div class="grid-2">
+            <label>Bat Kick Force <input type="number" name="batKickForce" /></label>
+            <label>Laser Kick Force <input type="number" name="laserKickForce" /></label>
+            <label>Revolver Kick Force <input type="number" name="revolverKickForce" /></label>
+            <label>Fist Kick Force <input type="number" name="fistKickForce" /></label>
+        </div>
+
+        <div class="section-title">Damage</div>
+        <div class="grid-2">
+            <label>Bat Damage <input type="number" name="batDamage" /></label>
+            <label>Laser Damage <input type="number" name="laserDamage" /></label>
+            <label>Revolver Damage <input type="number" name="revolverDamage" /></label>
+            <label>Fist Damage <input type="number" name="fistDamage" /></label>
+        </div>
+
+        <div class="section-title">Fly amount</div>
+        <div class="grid-2">
+            <label>Bat Kick Fly Amount <input type="number" name="batKickFlyAmount" /></label>
+            <label>Laser Kick Fly Amount <input type="number" name="laserKickFlyAmount" /></label>
+            <label>Revolver Kick Fly Amount <input type="number" name="revolverKickFlyAmount" /></label>
+            <label>Fist Kick Fly Amount <input type="number" name="fistKickFlyAmount" /></label>
+        </div>
+
+        <div class="section-title">Weapons</div>
+        <div class="grid-2">
+            <label>Respawn Delay X <input type="number" name="respawnDelayX" /></label>
+            <label>Respawn Delay Y <input type="number" name="respawnDelayY" /></label>
+            <label>Laser Bullet Amount <input type="number" name="laserBulletAmount" /></label>
+            <label>Revolver Bullet Amount <input type="number" name="revolverBulletAmount" /></label>
+            <label>Bubble Bullet Amount <input type="number" name="bubbleBulletAmount" /></label>
+        </div>
+
+        <div class="section-title">Bullet speed</div>
+        <div class="grid-2">
+            <label>Laser Bullet Speed <input type="number" name="laserBulletSpeed" /></label>
+            <label>Revolver Bullet Speed <input type="number" name="revolverBulletSpeed" /></label>
+            <label>Bubble Bullet Speed <input type="number" name="bubbleBulletSpeed" /></label>
+        </div>
+
+        <div class="section-title">Attack speed</div>
+        <div class="grid-2">
+            <label>Fists Attack Speed <input type="number" step="0.01" name="fistsAttackSpeed" /></label>
+            <label>Bat Attack Speed <input type="number" step="0.01" name="batAttackSpeed" /></label>
+        </div>
+
+        <div class="section-title">Player</div>
+        <div class="grid-2">
+            <label>Player Speed <input type="number" name="playerSpeed" /></label>
+            <label>Jump Power <input type="number" name="playerJumpPower" /></label>
+            <label>Gravity <input type="number" name="playerGravity" /></label>
+            <label>Skeleton Turn Speed <input type="number" name="skeletonTurnSpeed" /></label>
+        </div>
+
+        <div class="section-title">Camera</div>
+        <div class="grid-2">
+            <label>Focus Smooth Speed <input type="number" step="0.01" name="focusSmoothSpeed" /></label>
+            <label>Camera Distance <input type="number" step="0.01" name="cameraDistance" /></label>
+            <label>Camera X Speed <input type="number" name="cameraXSpeed" /></label>
+            <label>Camera Y Speed <input type="number" name="cameraYSpeed" /></label>
+            <label>Mouse Speed <input type="number" step="0.001" name="mouseSpeed" /></label>
+            <label>Mouse Speed Mobile <input type="number" step="0.001" name="mouseSpeedMobile" /></label>
+            <label>Rotate Speed <input type="number" step="0.01" name="rotateSpeed" /></label>
+        </div>
+
+        <div class="section-title">Respawn</div>
+        <div class="grid-2">
+            <label>Respawn Time Seconds <input type="number" name="respawnTimeSeconds" /></label>
+        </div>
+
+        <button type="button" id="saveClientSettings">Save Settings</button>
+        <div id="settingsMsg"></div>
+    </form>
+</div>
+
+<script>
+    const token = localStorage.getItem('jwt');
+    if (!token) window.location.href = 'login.html';
+
+    async function loadClientSettings() {
+        const res = await fetch('/settings', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) {
+            document.getElementById('settingsMsg').textContent = 'Error loading settings';
+            return;
+        }
+        const s = await res.json();
+        const form = document.getElementById('clientSettingsForm');
+        for (const el of Array.from(form.elements)) {
+            if (el.name && s.hasOwnProperty(el.name)) {
+                el.value = s[el.name];
+            }
+        }
+        document.getElementById('settingsMsg').textContent = '';
+    }
+
+    document.getElementById('saveClientSettings').onclick = async () => {
+        const form = document.getElementById('clientSettingsForm');
+        const payload = {};
+        for (const el of Array.from(form.elements)) {
+            if (!el.name) continue;
+            payload[el.name] = Number(el.value);
+        }
+        const res = await fetch('/settings', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(payload)
+        });
+        document.getElementById('settingsMsg').textContent = res.ok ? 'Settings saved' : 'Error saving settings';
+    };
+
+    loadClientSettings();
+</script>
+</body>
+</html>

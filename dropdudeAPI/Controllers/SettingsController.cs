@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using DropDudeAPI.Data;
 using DropDudeAPI.Models;
@@ -69,94 +70,104 @@ namespace DropDudeAPI.Controllers
             public double MouseSpeed { get; set; }
             public double MouseSpeedMobile { get; set; }
             public double RotateSpeed { get; set; }
+
+            // Respawn
+            public int RespawnTimeSeconds { get; set; } // NEW
         }
 
-        private static ClientGameSettingsDto MapToClientDto(ClientGameSettings s) => new ClientGameSettingsDto
+        private static ClientGameSettingsDto MapToClientDto(ClientGameSettings s)
         {
-            BatKickForce          = s.BatKickForce,
-            LaserKickForce        = s.LaserKickForce,
-            RevolverKickForce     = s.RevolverKickForce,
-            FistKickForce         = s.FistKickForce,
+            return new ClientGameSettingsDto
+            {
+                BatKickForce = s.BatKickForce,
+                LaserKickForce = s.LaserKickForce,
+                RevolverKickForce = s.RevolverKickForce,
+                FistKickForce = s.FistKickForce,
 
-            BatDamage             = s.BatDamage,
-            LaserDamage           = s.LaserDamage,
-            RevolverDamage        = s.RevolverDamage,
-            FistDamage            = s.FistDamage,
+                BatDamage = s.BatDamage,
+                LaserDamage = s.LaserDamage,
+                RevolverDamage = s.RevolverDamage,
+                FistDamage = s.FistDamage,
 
-            BatKickFlyAmount      = s.BatKickFlyAmount,
-            LaserKickFlyAmount    = s.LaserKickFlyAmount,
-            RevolverKickFlyAmount = s.RevolverKickFlyAmount,
-            FistKickFlyAmount     = s.FistKickFlyAmount,
+                BatKickFlyAmount = s.BatKickFlyAmount,
+                LaserKickFlyAmount = s.LaserKickFlyAmount,
+                RevolverKickFlyAmount = s.RevolverKickFlyAmount,
+                FistKickFlyAmount = s.FistKickFlyAmount,
 
-            RespawnDelayX         = s.RespawnDelayX,
-            RespawnDelayY         = s.RespawnDelayY,
-            LaserBulletAmount     = s.LaserBulletAmount,
-            RevolverBulletAmount  = s.RevolverBulletAmount,
-            BubbleBulletAmount    = s.BubbleBulletAmount,
+                RespawnDelayX = s.RespawnDelayX,
+                RespawnDelayY = s.RespawnDelayY,
+                LaserBulletAmount = s.LaserBulletAmount,
+                RevolverBulletAmount = s.RevolverBulletAmount,
+                BubbleBulletAmount = s.BubbleBulletAmount,
 
-            LaserBulletSpeed      = s.LaserBulletSpeed,
-            RevolverBulletSpeed   = s.RevolverBulletSpeed,
-            BubbleBulletSpeed     = s.BubbleBulletSpeed,
+                LaserBulletSpeed = s.LaserBulletSpeed,
+                RevolverBulletSpeed = s.RevolverBulletSpeed,
+                BubbleBulletSpeed = s.BubbleBulletSpeed,
 
-            FistsAttackSpeed      = s.FistsAttackSpeed,
-            BatAttackSpeed        = s.BatAttackSpeed,
+                FistsAttackSpeed = s.FistsAttackSpeed,
+                BatAttackSpeed = s.BatAttackSpeed,
 
-            PlayerSpeed           = s.PlayerSpeed,
-            PlayerJumpPower       = s.PlayerJumpPower,
-            PlayerGravity         = s.PlayerGravity,
-            SkeletonTurnSpeed     = s.SkeletonTurnSpeed,
+                PlayerSpeed = s.PlayerSpeed,
+                PlayerJumpPower = s.PlayerJumpPower,
+                PlayerGravity = s.PlayerGravity,
+                SkeletonTurnSpeed = s.SkeletonTurnSpeed,
 
-            FocusSmoothSpeed      = s.FocusSmoothSpeed,
-            CameraDistance        = s.CameraDistance,
-            CameraXSpeed          = s.CameraXSpeed,
-            CameraYSpeed          = s.CameraYSpeed,
-            MouseSpeed            = s.MouseSpeed,
-            MouseSpeedMobile      = s.MouseSpeedMobile,
-            RotateSpeed           = s.RotateSpeed
-        };
+                FocusSmoothSpeed = s.FocusSmoothSpeed,
+                CameraDistance = s.CameraDistance,
+                CameraXSpeed = s.CameraXSpeed,
+                CameraYSpeed = s.CameraYSpeed,
+                MouseSpeed = s.MouseSpeed,
+                MouseSpeedMobile = s.MouseSpeedMobile,
+                RotateSpeed = s.RotateSpeed,
+
+                RespawnTimeSeconds = s.RespawnTimeSeconds // NEW
+            };
+        }
 
         private static void ApplyFromClientDto(ClientGameSettings s, ClientGameSettingsDto input)
         {
-            s.BatKickForce          = input.BatKickForce;
-            s.LaserKickForce        = input.LaserKickForce;
-            s.RevolverKickForce     = input.RevolverKickForce;
-            s.FistKickForce         = input.FistKickForce;
+            s.BatKickForce = input.BatKickForce;
+            s.LaserKickForce = input.LaserKickForce;
+            s.RevolverKickForce = input.RevolverKickForce;
+            s.FistKickForce = input.FistKickForce;
 
-            s.BatDamage             = input.BatDamage;
-            s.LaserDamage           = input.LaserDamage;
-            s.RevolverDamage        = input.RevolverDamage;
-            s.FistDamage            = input.FistDamage;
+            s.BatDamage = input.BatDamage;
+            s.LaserDamage = input.LaserDamage;
+            s.RevolverDamage = input.RevolverDamage;
+            s.FistDamage = input.FistDamage;
 
-            s.BatKickFlyAmount      = input.BatKickFlyAmount;
-            s.LaserKickFlyAmount    = input.LaserKickFlyAmount;
+            s.BatKickFlyAmount = input.BatKickFlyAmount;
+            s.LaserKickFlyAmount = input.LaserKickFlyAmount;
             s.RevolverKickFlyAmount = input.RevolverKickFlyAmount;
-            s.FistKickFlyAmount     = input.FistKickFlyAmount;
+            s.FistKickFlyAmount = input.FistKickFlyAmount;
 
-            s.RespawnDelayX         = input.RespawnDelayX;
-            s.RespawnDelayY         = input.RespawnDelayY;
-            s.LaserBulletAmount     = input.LaserBulletAmount;
-            s.RevolverBulletAmount  = input.RevolverBulletAmount;
-            s.BubbleBulletAmount    = input.BubbleBulletAmount;
+            s.RespawnDelayX = input.RespawnDelayX;
+            s.RespawnDelayY = input.RespawnDelayY;
+            s.LaserBulletAmount = input.LaserBulletAmount;
+            s.RevolverBulletAmount = input.RevolverBulletAmount;
+            s.BubbleBulletAmount = input.BubbleBulletAmount;
 
-            s.LaserBulletSpeed      = input.LaserBulletSpeed;
-            s.RevolverBulletSpeed   = input.RevolverBulletSpeed;
-            s.BubbleBulletSpeed     = input.BubbleBulletSpeed;
+            s.LaserBulletSpeed = input.LaserBulletSpeed;
+            s.RevolverBulletSpeed = input.RevolverBulletSpeed;
+            s.BubbleBulletSpeed = input.BubbleBulletSpeed;
 
-            s.FistsAttackSpeed      = input.FistsAttackSpeed;
-            s.BatAttackSpeed        = input.BatAttackSpeed;
+            s.FistsAttackSpeed = input.FistsAttackSpeed;
+            s.BatAttackSpeed = input.BatAttackSpeed;
 
-            s.PlayerSpeed           = input.PlayerSpeed;
-            s.PlayerJumpPower       = input.PlayerJumpPower;
-            s.PlayerGravity         = input.PlayerGravity;
-            s.SkeletonTurnSpeed     = input.SkeletonTurnSpeed;
+            s.PlayerSpeed = input.PlayerSpeed;
+            s.PlayerJumpPower = input.PlayerJumpPower;
+            s.PlayerGravity = input.PlayerGravity;
+            s.SkeletonTurnSpeed = input.SkeletonTurnSpeed;
 
-            s.FocusSmoothSpeed      = input.FocusSmoothSpeed;
-            s.CameraDistance        = input.CameraDistance;
-            s.CameraXSpeed          = input.CameraXSpeed;
-            s.CameraYSpeed          = input.CameraYSpeed;
-            s.MouseSpeed            = input.MouseSpeed;
-            s.MouseSpeedMobile      = input.MouseSpeedMobile;
-            s.RotateSpeed           = input.RotateSpeed;
+            s.FocusSmoothSpeed = input.FocusSmoothSpeed;
+            s.CameraDistance = input.CameraDistance;
+            s.CameraXSpeed = input.CameraXSpeed;
+            s.CameraYSpeed = input.CameraYSpeed;
+            s.MouseSpeed = input.MouseSpeed;
+            s.MouseSpeedMobile = input.MouseSpeedMobile;
+            s.RotateSpeed = input.RotateSpeed;
+
+            s.RespawnTimeSeconds = input.RespawnTimeSeconds; // NEW
         }
 
         // GET /settings  → працює з новою таблицею ClientGameSettings
@@ -215,7 +226,10 @@ namespace DropDudeAPI.Controllers
                     CameraYSpeed = 120,
                     MouseSpeed = 0.02,
                     MouseSpeedMobile = 0.002,
-                    RotateSpeed = 2
+                    RotateSpeed = 2,
+
+                    // Respawn
+                    RespawnTimeSeconds = 5 // NEW default
                 };
                 _db.ClientGameSettings.Add(s);
                 await _db.SaveChangesAsync();
@@ -229,9 +243,11 @@ namespace DropDudeAPI.Controllers
         [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> UpdateSettings([FromBody] ClientGameSettingsDto input)
         {
-            var s = await _db.ClientGameSettings.FirstOrDefaultAsync();
+            ClientGameSettings? s = await _db.ClientGameSettings.FirstOrDefaultAsync();
             if (s == null)
+            {
                 return NotFound(new { error = "Client settings not found" });
+            }
 
             ApplyFromClientDto(s, input);
             await _db.SaveChangesAsync();

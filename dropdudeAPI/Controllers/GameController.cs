@@ -38,6 +38,13 @@ namespace DropDudeAPI.Controllers
             public string Username { get; set; } = string.Empty;
             public int Wins { get; set; }
             public double Rating { get; set; }
+            public bool IsAdmin { get; set; }            // NEW
+        }
+
+        public class LegacyFinishDto
+        {
+            public int Damage { get; set; }
+            public int WinnerId { get; set; } // ігнорується
         }
 
         // ==== NEW: кожен гравець шле свій результат ====
@@ -125,13 +132,7 @@ namespace DropDudeAPI.Controllers
             });
         }
 
-        public class LegacyFinishDto
-        {
-            public int Damage { get; set; }
-            public int WinnerId { get; set; } // ігнорується
-        }
-
-        // ==== Лідерборд МІСЯЦЯ: ТЕПЕР СПИСОК ====
+        // ==== Лідерборд: повний список ====
         [HttpGet("leaderboard")]
         [Authorize]
         public async Task<IActionResult> GetLeaderboard()
@@ -145,14 +146,15 @@ namespace DropDudeAPI.Controllers
                     PlayerId = p.Id,
                     Username = p.Username,
                     Wins = p.MonthlyWins,
-                    Rating = p.Rating
+                    Rating = p.Rating,
+                    IsAdmin = p.IsAdmin                 // NEW
                 })
                 .ToListAsync();
 
             return Ok(list);
         }
 
-        // Повний список (залишаю для сумісності; еквівалентно /game/leaderboard)
+        // Повний список (залишено для сумісності; еквівалентно /game/leaderboard)
         [HttpGet("leaderboard/all")]
         [Authorize]
         public async Task<IActionResult> GetFullLeaderboard()
@@ -165,7 +167,8 @@ namespace DropDudeAPI.Controllers
                     PlayerId = p.Id,
                     Username = p.Username,
                     Wins = p.MonthlyWins,
-                    Rating = p.Rating
+                    Rating = p.Rating,
+                    IsAdmin = p.IsAdmin                 // NEW
                 })
                 .ToListAsync();
 
@@ -185,7 +188,8 @@ namespace DropDudeAPI.Controllers
                     PlayerId = p.Id,
                     Username = p.Username,
                     Wins = p.MonthlyWins,
-                    Rating = p.Rating
+                    Rating = p.Rating,
+                    IsAdmin = p.IsAdmin                 // NEW
                 })
                 .ToListAsync();
 
