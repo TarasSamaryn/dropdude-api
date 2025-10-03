@@ -4,109 +4,67 @@
     <meta charset="utf-8">
     <title>Server Settings</title>
     <style>
-        body { background: #121212; color: #eee; font-family: sans-serif; padding: 2em; }
-        .card { max-width: 680px; margin: auto; background: #1e1e1e; padding: 1.5em;
-            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        body { background: #121212; color: #eee; font-family: sans-serif; padding: 2em; display: flex; justify-content: center; }
+        .card { max-width: 680px; width: 100%; background: #1e1e1e; padding: 1.5em; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         h3 { margin-top: 0; text-align: center; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
         label { display: block; margin: 0.5em 0; font-size: 0.9em; }
-        input { width: 100%; padding: 0.5em; border: 1px solid #444; border-radius: 4px;
-            background: #2a2a2a; color: #eee; }
-        button { width: 100%; margin-top: 1em; padding: 0.75em; border: none; border-radius: 4px;
-            font-size: 1em; cursor: pointer; background: #3a3a3a; color: #fff; }
+        input { width: 100%; padding: 0.5em; border: 1px solid #444; border-radius: 4px; background: #2a2a2a; color: #eee; }
+        button { margin-top: 1em; padding: 0.75em; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; background: #3a3a3a; color: #fff; }
         button:hover { background: #4e4e4e; }
+        .back-btn { background: #555; margin-bottom: 1em; }
+        .back-btn:hover { background: #777; }
         #serverSettingsMsg { text-align: center; margin-top: 0.5em; font-size: 0.9em; }
-        .section-title { margin: 1.2em 0 0.6em; font-weight: bold; opacity: .9; }
     </style>
 </head>
 <body>
 <div class="card">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
     <h3>Server Game Settings</h3>
-    <form id="serverSettingsForm">
-        <div class="section-title">Gameplay</div>
-        <div class="grid-2">
-            <label>Gameplay Timer <input type="number" name="gameplayTimer" /></label>
-            <label>Max Players For Random Room <input type="number" name="maxPlayersForRandomRoom" /></label>
-            <label>Max Players For Ranked Room <input type="number" name="maxPlayersForRankedRoom" /></label>
-        </div>
-
-        <div class="section-title">Server</div>
-        <div class="grid-2">
-            <label>Find Room Seconds <input type="number" name="findRoomSeconds" /></label>
-        </div>
-
-        <div class="section-title">Skins</div>
-        <div class="grid-2">
-            <label>Skins Amount <input type="number" name="skinsAmount" /></label>
-            <label>Free Skins (csv) <input type="text" name="freeSkins" placeholder="0,6,7" /></label>
-            <label>Monthly Skins (csv) <input type="text" name="monthlySkins" placeholder="1,2,8" /></label>
-        </div>
-
-        <div class="section-title">Bots</div>
-        <div class="grid-2">
-            <label>Medium Rating Min <input type="number" name="mediumRatingMin" /></label>
-            <label>Medium Rating Max <input type="number" name="mediumRatingMax" /></label>
-        </div>
-
-        <button type="button" id="saveServerSettings">Save Settings</button>
-        <div id="serverSettingsMsg"></div>
-    </form>
+    <form id="serverSettingsForm"></form>
+    <button type="button" id="saveServerSettings">Save Settings</button>
+    <div id="serverSettingsMsg"></div>
 </div>
-
 <script>
     const token = localStorage.getItem('jwt');
     if (!token) window.location.href = 'login.html';
 
-    async function loadServerSettings() {
-        const res = await fetch('/server-settings', { headers: { 'Authorization': 'Bearer ' + token } });
+    async function loadSettings() {
+        const res = await fetch('/server-settings');
         if (!res.ok) {
-            document.getElementById('serverSettingsMsg').textContent = 'Error loading server settings';
+            document.getElementById('serverSettingsMsg').textContent = 'Error loading';
             return;
         }
         const s = await res.json();
         const form = document.getElementById('serverSettingsForm');
-
-        if (form.gameplayTimer) form.gameplayTimer.value = s.gameplayTimer ?? '';
-        if (form.maxPlayersForRandomRoom) form.maxPlayersForRandomRoom.value = s.maxPlayersForRandomRoom ?? '';
-        if (form.maxPlayersForRankedRoom) form.maxPlayersForRankedRoom.value = s.maxPlayersForRankedRoom ?? '';
-        if (form.findRoomSeconds) form.findRoomSeconds.value = s.findRoomSeconds ?? '';
-        if (form.skinsAmount) form.skinsAmount.value = s.skinsAmount ?? '';
-
-        if (form.freeSkins) form.freeSkins.value = Array.isArray(s.freeSkins) ? s.freeSkins.join(',') : '';
-        if (form.monthlySkins) form.monthlySkins.value = Array.isArray(s.monthlySkins) ? s.monthlySkins.join(',') : '';
-
-        if (form.mediumRatingMin) form.mediumRatingMin.value = s.mediumRatingMin ?? '';
-        if (form.mediumRatingMax) form.mediumRatingMax.value = s.mediumRatingMax ?? '';
-
-        document.getElementById('serverSettingsMsg').textContent = '';
+        form.innerHTML = '';
+        for (const key in s) {
+            const val = Array.isArray(s[key]) ? s[key].join(',') : s[key];
+            const label = document.createElement('label');
+            label.innerHTML = `${key}: <input name="${key}" value="${val}">`;
+            form.appendChild(label);
+        }
     }
 
     document.getElementById('saveServerSettings').onclick = async () => {
         const form = document.getElementById('serverSettingsForm');
-        const payload = {
-            gameplayTimer: Number(form.gameplayTimer.value),
-            maxPlayersForRandomRoom: Number(form.maxPlayersForRandomRoom.value),
-            maxPlayersForRankedRoom: Number(form.maxPlayersForRankedRoom.value),
-            findRoomSeconds: Number(form.findRoomSeconds.value),
-            skinsAmount: Number(form.skinsAmount.value),
-            freeSkins: (form.freeSkins.value || '').split(',').map(x => x.trim()).filter(x => x !== '').map(Number),
-            monthlySkins: (form.monthlySkins.value || '').split(',').map(x => x.trim()).filter(x => x !== '').map(Number),
-            mediumRatingMin: Number(form.mediumRatingMin.value),
-            mediumRatingMax: Number(form.mediumRatingMax.value)
-        };
-
+        const payload = {};
+        for (const el of form.elements) {
+            if (!el.name) continue;
+            if (el.value.includes(',')) {
+                payload[el.name] = el.value.split(',').map(x => Number(x.trim())).filter(x => !isNaN(x));
+            } else {
+                payload[el.name] = Number(el.value);
+            }
+        }
         const res = await fetch('/server-settings', {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
             body: JSON.stringify(payload)
         });
-        document.getElementById('serverSettingsMsg').textContent = res.ok ? 'Server settings saved' : 'Error saving server settings';
+        document.getElementById('serverSettingsMsg').textContent = res.ok ? 'Saved ✅' : 'Error saving';
     };
 
-    loadServerSettings();
+    loadSettings();
 </script>
 </body>
 </html>

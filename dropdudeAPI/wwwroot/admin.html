@@ -20,14 +20,9 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
-        h3 {
-            margin-top: 0;
-            text-align: center;
-        }
-        .buttons {
-            margin: 1em 0;
-        }
-        button {
+        h3 { margin-top: 0; text-align: center; }
+        .buttons { margin: 1em 0; }
+        .btn {
             width: 100%;
             margin: 0.5em 0;
             padding: 0.75em;
@@ -38,26 +33,33 @@
             background: #3a3a3a;
             color: #fff;
         }
-        button:hover {
-            background: #4e4e4e;
+        .btn:hover { background: #4e4e4e; }
+        .danger {
+            background: #b71c1c;
         }
-        #msg {
-            text-align: center;
-            margin-top: 0.5em;
-            font-size: 0.9em;
+        .danger:hover {
+            background: #d32f2f;
         }
+        .spacer { height: 12px; }
+        #msg { text-align: center; margin-top: 0.5em; font-size: 0.9em; }
+        .footer { margin-top: 1.2em; }
     </style>
 </head>
 <body>
 <div class="card">
     <h3>Admin Panel</h3>
+
     <div class="buttons">
-        <button id="viewLeaderboard">View Leaderboard</button>
-        <button id="viewLogs">View Logs</button>
-        <button id="resetMonthly">Reset Monthly Wins</button>
-        <button id="manageClientSettings">Manage ClientGame Settings</button>
-        <button id="manageServerSettings">Manage ServerGame Settings</button>
-        <div id="msg"></div>
+        <button class="btn" id="viewLeaderboard">View Leaderboard</button>
+        <button class="btn" id="viewLogs">View Logs</button>
+        <button class="btn" id="manageClientSettings">Manage ClientGame Settings</button>
+        <button class="btn" id="manageServerSettings">Manage ServerGame Settings</button>
+
+        <div class="footer">
+            <div class="spacer"></div>
+            <button class="btn danger" id="resetMonthly">Reset Monthly Wins</button>
+            <div id="msg"></div>
+        </div>
     </div>
 </div>
 
@@ -65,20 +67,17 @@
     const token = localStorage.getItem('jwt');
     if (!token) window.location.href = 'login.html';
 
-    // відкриває нове вікно
-    function openPopup(url, title, w, h) {
-        const left = (screen.width - w) / 2;
-        const top = (screen.height - h) / 2;
-        window.open(url, title, `width=${w},height=${h},top=${top},left=${left},scrollbars=yes,resizable=yes`);
-    }
+    // Переходи в ТОму ж вікні (щоб працювала кнопка "Назад")
+    document.getElementById('viewLeaderboard').onclick = () => location.href = 'leaderboard.html';
+    document.getElementById('viewLogs').onclick = () => location.href = 'logview.html';
+    document.getElementById('manageClientSettings').onclick = () => location.href = 'clientsettings.html';
+    document.getElementById('manageServerSettings').onclick = () => location.href = 'serversettings.html';
 
-    // кнопки
-    document.getElementById('viewLeaderboard').onclick = () => openPopup('leaderboard.html', 'Leaderboard', 600, 600);
-    document.getElementById('viewLogs').onclick = () => openPopup('logview.html', 'Logs', 800, 600);
-    document.getElementById('manageClientSettings').onclick = () => openPopup('clientsettings.html', 'Client Settings', 700, 800);
-    document.getElementById('manageServerSettings').onclick = () => openPopup('serversettings.html', 'Server Settings', 700, 800);
-
+    // Підтвердження для скидання місячних перемог
     document.getElementById('resetMonthly').onclick = async () => {
+        const ok = confirm('⚠️ Увага!\nЦя дія скине лічильник перемог за місяць для УСІХ гравців.\nПродовжити?');
+        if (!ok) return;
+
         const res = await fetch('/game/reset-monthly', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token }
